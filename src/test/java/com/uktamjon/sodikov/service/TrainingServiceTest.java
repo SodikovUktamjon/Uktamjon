@@ -27,21 +27,22 @@ public class TrainingServiceTest {
     private TrainerService trainerService;
 
     @Mock
+    private TrainingTypeService trainingTypeService;
+    @Mock
     private TraineeService traineeService;
 
-    @Mock
-    private TrainingTypeService trainingTypeService;
+
 
     @InjectMocks
     private TrainingService trainingService;
-
+    @Mock
+    private TrainerWorkloadFeignClient workloadFeignClient;
     @BeforeEach
     void setUp() {
         trainingRepository = mock(TrainingRepository.class);
         trainerService = mock(TrainerService.class);
-        traineeService = mock(TraineeService.class);
-        trainingTypeService = mock(TrainingTypeService.class);
-        trainingService = new TrainingService(trainingRepository, trainerService, traineeService, trainingTypeService);
+        workloadFeignClient = mock(TrainerWorkloadFeignClient.class);
+        trainingService = new TrainingService(workloadFeignClient,trainingRepository, trainerService );
     }
 
 

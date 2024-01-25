@@ -1,18 +1,11 @@
 package com.uktamjon.sodikov;
 
-import com.uktamjon.sodikov.enums.TokenType;
-import com.uktamjon.sodikov.reponse.TokenResponse;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.lang.NonNull;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -20,11 +13,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
-import java.security.Key;
-import java.util.Date;
 import java.util.Properties;
-
-import static com.uktamjon.sodikov.enums.TokenType.ACCESS;
 
 @Configuration
 @RequiredArgsConstructor
@@ -42,6 +31,7 @@ public class SpringDataConfigurer {
         dataSource.setDriverClassName(env.getRequiredProperty("spring.datasource.driver-class-name"));
         return dataSource;
     }
+
 
 
 

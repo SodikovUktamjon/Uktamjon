@@ -14,11 +14,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TrainingService {
 
+    private final TrainerWorkloadFeignClient trainerWorkloadFeignClient;
     private final TrainingRepository trainingRepository;
     private final TrainerService trainerService;
-    private final TraineeService traineeService;
-    private final TrainingTypeService trainingTypeService;
-    private final TrainerWorkloadFeignClient trainerWorkloadFeignClient;
 
     public Training createTraining(Training training) {
         if (trainerService.getTrainer(training.getTrainerId().getId())==null
