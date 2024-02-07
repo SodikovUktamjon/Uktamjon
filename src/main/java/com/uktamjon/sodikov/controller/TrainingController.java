@@ -18,7 +18,6 @@ public class TrainingController {
 
     private final TrainingService trainingService;
     private final CustomMetricsService customMetricsService;
-    private final TrainerWorkloadFeignClient trainerWorkloadFeignClient;
     @PostMapping("/create")
     public ResponseEntity<Training> createTraining(@RequestBody Training training) {
         customMetricsService.recordCustomMetric(1);

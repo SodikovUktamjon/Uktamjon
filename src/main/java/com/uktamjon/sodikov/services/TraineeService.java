@@ -6,9 +6,11 @@ import com.uktamjon.sodikov.dtos.CreateResponse;
 import com.uktamjon.sodikov.repository.TraineeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -20,8 +22,8 @@ public class TraineeService {
 
 
     public CreateResponse createTrainee(Trainee trainee) {
-        if (userService.getUserById(trainee.getUserId().getId()) != null) {
-            log.info("User with this id already exists");
+        if (userService.getUserByUsername(trainee.getUserId().getUsername()) != null) {
+            log.info("User with this username already exists");
             return null;
         }
         User user1 = userService.createUser(trainee.getUserId());
@@ -45,8 +47,8 @@ public class TraineeService {
     }
 
     public void deleteTrainee(int traineeId) {
-        Trainee traineeNotFound = traineeRepository.findById(traineeId).orElseThrow(() -> new RuntimeException("Trainee not found"));
-        userService.deleteUserById(traineeNotFound.getUserId().getId());
+        Trainee traineeNotFound = traineeRepository.findById(traineeId).orElseThrow(()->new NullPointerException("User Not Found"));
+        userService.deleteUserById(Objects.requireNonNull(traineeNotFound).getUserId().getId());
         traineeRepository.deleteById(traineeId);
         log.info("Trainee deleted: {}", traineeId);
     }

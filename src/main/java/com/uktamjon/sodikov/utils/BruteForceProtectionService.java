@@ -28,7 +28,7 @@
             return entry != null && entry.isBlocked();
         }
 
-        private static class BruteForceEntry {
+        public static class BruteForceEntry {
             private int attempts = 0;
             private long blockUntilTimestamp = 0;
 

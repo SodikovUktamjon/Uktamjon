@@ -39,4 +39,5 @@ class BruteForceProtectionServiceTest {
         Thread.sleep(BruteForceProtectionService.LOCKOUT_DURATION+1000);
         assertFalse(bruteForceProtectionService.isUserBlocked(username), "User should be unblocked after lockout duration");
     }
+
 }

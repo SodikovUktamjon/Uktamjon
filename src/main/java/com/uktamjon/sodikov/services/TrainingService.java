@@ -14,13 +14,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TrainingService {
 
-    private final TrainerWorkloadFeignClient trainerWorkloadFeignClient;
     private final TrainingRepository trainingRepository;
+    private final TrainerWorkloadFeignClient trainerWorkloadFeignClient;
     private final TrainerService trainerService;
 
     public Training createTraining(Training training) {
-        if (trainerService.getTrainer(training.getTrainerId().getId())==null
-                && !training.getTrainerId().getUserId().isActive() &&training.getTraineeId()!=null) {
+        if ((trainerService.getTrainer(training.getTrainerId().getId())==null
+                || !training.getTrainerId().getUserId().isActive()) && training.getTraineeId()==null) {
             log.error("Training not created: {}", training);
 
             return null;

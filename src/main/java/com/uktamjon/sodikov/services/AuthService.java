@@ -4,7 +4,7 @@ import com.uktamjon.sodikov.config.JwtUtils;
 import com.uktamjon.sodikov.domains.User;
 import com.uktamjon.sodikov.dtos.CreateAuthUserDTO;
 import com.uktamjon.sodikov.dtos.GetTokenDTO;
-import com.uktamjon.sodikov.reponse.TokenResponse;
+import com.uktamjon.sodikov.response.TokenResponse;
 import com.uktamjon.sodikov.repository.UserRepository;
 import com.uktamjon.sodikov.utils.BruteForceProtectionService;
 import com.uktamjon.sodikov.utils.PasswordGeneratorService;
@@ -39,8 +39,8 @@ public class AuthService {
                 )
         );
         User user = authUserRepository.findByUsername(dto.getUsername());
-        if(passwordGeneratorService.checkPassword(passwordGeneratorService.encryptPassword(dto.getPassword()), user.getPassword())) {
-            TokenResponse tokenResponse = jwtUtils.generateToken(user.getUsername());
+        if(passwordGeneratorService.checkPassword(dto.getPassword(), user.getPassword())) {
+            TokenResponse tokenResponse = jwtUtils.generateToken(dto.getUsername());
             return GetTokenDTO.builder()
                     .token(tokenResponse.getAccessToken())
                     .build();

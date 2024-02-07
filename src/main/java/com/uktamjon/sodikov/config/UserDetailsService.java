@@ -2,9 +2,9 @@ package com.uktamjon.sodikov.config;
 
 import com.uktamjon.sodikov.domains.User;
 import com.uktamjon.sodikov.enums.TokenType;
-import com.uktamjon.sodikov.reponse.RefreshTokenRequest;
-import com.uktamjon.sodikov.reponse.TokenRequest;
-import com.uktamjon.sodikov.reponse.TokenResponse;
+import com.uktamjon.sodikov.response.RefreshTokenRequest;
+import com.uktamjon.sodikov.response.TokenRequest;
+import com.uktamjon.sodikov.response.TokenResponse;
 import com.uktamjon.sodikov.repository.UserRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.lang.NonNull;

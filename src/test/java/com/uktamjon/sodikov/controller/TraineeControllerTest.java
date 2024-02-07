@@ -50,6 +50,22 @@ class TraineeControllerTest {
     }
 
     @Test
+    void testCreateTraineeBadRequest(){
+        Trainee trainee = new Trainee();
+        when(traineeService.createTrainee(trainee)).thenReturn(null);
+
+
+
+        ResponseEntity<CreateResponse> responseEntity = traineeController.createTrainee(trainee);
+
+
+
+        verify(customMetricsService, times(1)).recordCustomMetric(1);
+        verify(traineeService, times(1)).createTrainee(trainee);
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+    @Test
     void testUpdateTrainee() {
 
 
@@ -68,16 +84,26 @@ class TraineeControllerTest {
     }
 
     @Test
+    void testUpdateTraineeBadRequest() {
+
+
+        Trainee trainee = new Trainee();
+        when(traineeService.updateTrainee(trainee)).thenReturn(null);
+
+
+
+        ResponseEntity<Trainee> responseEntity = traineeController.updateTrainee(trainee);
+
+
+
+        verify(customMetricsService, times(1)).recordCustomMetric(1);
+        verify(traineeService, times(1)).updateTrainee(trainee);
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+    @Test
     void testDeleteTrainee() {
-
-
         int traineeId = 1;
-
-
-
         ResponseEntity<String> responseEntity = traineeController.deleteTrainee(traineeId);
-
-
 
         verify(customMetricsService).recordCustomMetric(1);
         verify(traineeService).deleteTrainee(traineeId);
@@ -104,6 +130,23 @@ class TraineeControllerTest {
     }
 
     @Test
+    void testGetTraineeByIdNotFound() {
+
+
+        int traineeId = 1;
+        Trainee trainee = new Trainee();
+        when(traineeService.getTrainee(traineeId)).thenReturn(null);
+
+        ResponseEntity<Trainee> responseEntity = traineeController.getTrainee(traineeId);
+
+
+
+        verify(customMetricsService, times(1)).recordCustomMetric(1);
+        verify(traineeService, times(1)).getTrainee(traineeId);
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+
+    @Test
     void testGetTraineeByUsername() {
 
 
@@ -120,6 +163,24 @@ class TraineeControllerTest {
         verify(customMetricsService).recordCustomMetric(1);
         verify(traineeService).getTrainee(username);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    void testGetTraineeByUsernameNotFound() {
+
+
+        String username = "testUser";
+        when(traineeService.getTrainee(username)).thenReturn(null);
+
+
+
+        ResponseEntity<Trainee> responseEntity = traineeController.getTrainee(username);
+
+
+
+        verify(customMetricsService, times(1)).recordCustomMetric(1);
+        verify(traineeService, times(1)).getTrainee(username);
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
     @Test

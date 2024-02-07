@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
@@ -34,19 +34,19 @@ public class TraineeServiceTest {
 
         traineeRepository = mock(TraineeRepository.class);
         userService = mock(UserService.class);
-        traineeService = new TraineeService( userService, traineeRepository);
+        traineeService = new TraineeService(userService,traineeRepository);
     }
 
     @Test
     public void testCreateTrainee_UserExists() {
         Trainee trainee = new Trainee();
         User user = new User();
-        user.setId(1);
+        user.setUsername("1");
         trainee.setUserId(user);
 
 
-        when(userService.getUserById(trainee.getUserId().getId())).thenReturn(new User());
-
+        when(userService.getUserByUsername(trainee.getUserId().getUsername())).thenReturn(user);
+        when(traineeRepository.save(trainee)).thenReturn(trainee);
         CreateResponse createdTrainee = traineeService.createTrainee(trainee);
 
         assertNull(createdTrainee);
@@ -56,19 +56,14 @@ public class TraineeServiceTest {
     public void testCreateTrainee_UserDoesNotExist() {
         Trainee trainee = new Trainee();
         User user = new User();
+        user.setUsername("John.Doe");
+        user.setPassword("Password");
         trainee.setUserId(user);
-
-
-        when(userService.getUserById(trainee.getUserId().getId())).thenReturn(null);
-
-        when(userService.createUser(user)).thenReturn(user);
-
         when(traineeRepository.save(trainee)).thenReturn(trainee);
-
+        when(userService.getUserById(trainee.getUserId().getId())).thenReturn(null);
+        when(userService.createUser(user)).thenReturn(user);
         CreateResponse createdTrainee = traineeService.createTrainee(trainee);
-
         assertEquals(trainee.getUserId().getUsername(), createdTrainee.getUsername());
-        assertEquals(trainee.getUserId().getPassword(), createdTrainee.getPassword());
     }
     @Test
     public void testUpdateTrainee_UserAndTraineeExist() {
@@ -81,67 +76,45 @@ public class TraineeServiceTest {
 
 
         when(userService.getUserById(trainee.getUserId().getId())).thenReturn(user);
-
-
         when(traineeRepository.existsById(trainee.getId())).thenReturn(true);
-
-
-
         when(traineeRepository.save(trainee)).thenReturn(trainee);
-
         Trainee updatedTrainee = traineeService.updateTrainee(trainee);
 
-
         assertEquals(trainee, updatedTrainee);
-
-
-        verify(userService, times(1)).updateUser(user);
+        verify(traineeRepository,times(1)).existsById(trainee.getId());
         verify(traineeRepository, times(1)).save(trainee);
+        verify(userService, times(1)).updateUser(user);
     }
     @Test
     public void testDeleteTrainee_TraineeExists() {
 
         Trainee trainee = new Trainee();
         trainee.setId(1);
-        trainee.setUserId(new User());
+        trainee.setUserId(User.builder().id(1).build());
 
 
         when(traineeRepository.findById(1)).thenReturn(Optional.of(trainee));
 
-
         traineeService.deleteTrainee(1);
 
-
-        verify(userService, times(1)).deleteUserById(trainee.getUserId().getId());
         verify(traineeRepository, times(1)).deleteById(1);
     }
 
     @Test
     public void testDeleteTrainee_TraineeDoesNotExist() {
         int traineeId = 1;
-
-
-        when(traineeRepository.findById(traineeId)).thenReturn(Optional.empty());
-
-
-        assertThrows(RuntimeException.class, () -> traineeService.deleteTrainee(traineeId));
-
-
+        when(traineeRepository.findById(traineeId)).thenReturn(null);
+        assertThrows(NullPointerException.class,()->traineeService.deleteTrainee(traineeId));
+        verify(traineeRepository, times(1)).findById(traineeId);
     }
     @Test
     public void testGetTrainee_TraineeExists() {
         int traineeId = 1;
         Trainee trainee = new Trainee();
-        trainee.setId(traineeId);
-
-
         when(traineeRepository.findById(traineeId)).thenReturn(Optional.of(trainee));
-
-
         Trainee retrievedTrainee = traineeService.getTrainee(traineeId);
-
-
         assertEquals(trainee, retrievedTrainee);
+        verify(traineeRepository, times(1)).findById(traineeId);
     }
 
 

@@ -1,4 +1,4 @@
-package com.uktamjon.sodikov.reponse;
+package com.uktamjon.sodikov.response;
 
 import lombok.*;
 

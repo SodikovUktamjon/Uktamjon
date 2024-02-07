@@ -31,6 +31,7 @@ public class SecurityConfigurer {
         this.jwtFilter = jwtFilter;
         this.userDetailsService = userDetailsService;
     }
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -38,7 +39,9 @@ public class SecurityConfigurer {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedHeaders("Authorization", "Content-Type")
+                        .allowedHeaders("Authorization", "Content-Type", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "Access-Control-Allow-Methods", "Access-Control-Allow-Headers", "Access-Control-Expose-Headers", "Access-Control-Max-Age")
+                        .allowedOrigins("http://localhost:8080")
+                        .allowedOriginPatterns("http://localhost:8080/swagger-ui/index.html")
                         .allowCredentials(true);
             }
         };
@@ -54,10 +57,19 @@ public class SecurityConfigurer {
         config.addAllowedMethod("DELETE");
         config.addAllowedHeader("Authorization");
         config.addAllowedHeader("Content-Type");
+        config.addAllowedHeader("Access-Control-Allow-Origin");
+        config.addAllowedHeader("Access-Control-Allow-Credentials");
+        config.addAllowedHeader("Access-Control-Allow-Methods");
+        config.addAllowedHeader("Access-Control-Allow-Headers");
+        config.addAllowedHeader("Access-Control-Expose-Headers");
+        config.addAllowedHeader("Access-Control-Max-Age");
+        config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("http://localhost:8080/swagger-ui/index.html");
         config.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter();
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -83,7 +95,6 @@ public class SecurityConfigurer {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
 
 
     @Bean

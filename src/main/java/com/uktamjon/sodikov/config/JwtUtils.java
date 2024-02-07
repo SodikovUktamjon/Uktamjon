@@ -2,12 +2,13 @@ package com.uktamjon.sodikov.config;
 
 
 import com.uktamjon.sodikov.enums.TokenType;
-import com.uktamjon.sodikov.reponse.TokenResponse;
+import com.uktamjon.sodikov.response.TokenResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -45,7 +46,7 @@ public class JwtUtils {
     }
 
 
-    public void generateAccessToken(@NonNull String username, @NonNull TokenResponse tokenResponse) {
+    public void generateAccessToken(@NotNull String username, @NotNull TokenResponse tokenResponse) {
         tokenResponse.setAccessTokenExpiry(new Date(System.currentTimeMillis() + accessTokenExpiry));
         String accessToken = Jwts.builder()
                 .setSubject(username)
@@ -56,7 +57,7 @@ public class JwtUtils {
                 .compact();
         tokenResponse.setAccessToken(accessToken);
     }
-    public void generateRefreshToken(@NonNull String username, @NonNull TokenResponse tokenResponse) {
+    public void generateRefreshToken(@NotNull String username, @NotNull TokenResponse tokenResponse) {
         tokenResponse.setRefreshTokenExpiry(new Date(System.currentTimeMillis() + refreshTokenExpiry));
         String refreshToken = Jwts.builder()
                 .setSubject(username)
@@ -85,7 +86,7 @@ public class JwtUtils {
         return claims.getSubject();
     }
 
-    private Claims getClaims(String token, TokenType tokenType) {
+    public Claims getClaims(String token, TokenType tokenType) {
         return Jwts.parserBuilder()
                 .setSigningKey(signKey(tokenType))
                 .build()
@@ -93,7 +94,7 @@ public class JwtUtils {
                 .getBody();
     }
 
-    private Key signKey(TokenType tokenType) {
+    public Key signKey(TokenType tokenType) {
         byte[] bytes = Decoders.BASE64.decode(tokenType.equals(ACCESS) ? ACCESS_TOKEN_SECRET_KEY : REFRESH_TOKEN_SECRET_KEY);
         return Keys.hmacShaKeyFor(bytes);
     }

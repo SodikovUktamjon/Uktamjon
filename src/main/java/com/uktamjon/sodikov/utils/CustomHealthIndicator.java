@@ -1,4 +1,4 @@
-package com.uktamjon.sodikov;
+package com.uktamjon.sodikov.utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
@@ -27,12 +27,12 @@ public class CustomHealthIndicator implements HealthIndicator {
         }
     }
 
-    private boolean checkIfApplicationIsHealthy() {
+    public boolean checkIfApplicationIsHealthy() {
         return checkDatabaseHealth();
     }
 
 
-        private boolean checkDatabaseHealth() {
+        public boolean checkDatabaseHealth() {
             Connection connection = null;
             try {
                 String jdbcUrl;

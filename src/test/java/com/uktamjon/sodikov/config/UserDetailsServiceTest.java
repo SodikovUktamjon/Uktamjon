@@ -1,18 +1,18 @@
 package com.uktamjon.sodikov.config;
 
-import com.uktamjon.sodikov.config.JwtUtils;
-import com.uktamjon.sodikov.config.UserDetails;
-import com.uktamjon.sodikov.config.UserDetailsService;
 import com.uktamjon.sodikov.domains.User;
 import com.uktamjon.sodikov.enums.TokenType;
-import com.uktamjon.sodikov.reponse.RefreshTokenRequest;
-import com.uktamjon.sodikov.reponse.TokenResponse;
+import com.uktamjon.sodikov.response.RefreshTokenRequest;
+import com.uktamjon.sodikov.response.TokenRequest;
+import com.uktamjon.sodikov.response.TokenResponse;
 import com.uktamjon.sodikov.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,6 +25,8 @@ class UserDetailsServiceTest {
 
     @Mock
     private JwtUtils jwtUtils;
+    @Mock
+    private AuthenticationManager authenticationManager;
 
 
     @InjectMocks
@@ -85,5 +87,28 @@ class UserDetailsServiceTest {
                 () -> userDetailsService.refreshToken(refreshTokenRequest));
 
         assertTrue(exception.getMessage().contains("Invalid refresh token"), "Exception message should indicate invalid refresh token");
+    }
+    @Test
+    void generateToken() {
+        TokenRequest tokenRequest = TokenRequest.builder()
+                .username("John.Doe")
+                .password("password")
+                .build();
+        TokenResponse tokenResponse=new TokenResponse();
+        when(jwtUtils.generateToken("John.Doe")).thenReturn(tokenResponse);
+        TokenResponse tokenResponse1 = userDetailsService.generateToken(tokenRequest);
+        assertEquals(tokenResponse,tokenResponse1);
+    }
+
+
+
+
+    public TokenResponse generateToken( TokenRequest tokenRequest) {
+        String username = tokenRequest.getUsername();
+        String password = tokenRequest.getPassword();
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(username, password);
+        authenticationManager.authenticate(authentication);
+        return jwtUtils.generateToken(username);
     }
 }

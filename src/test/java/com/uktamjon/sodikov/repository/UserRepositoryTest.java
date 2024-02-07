@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -76,6 +77,7 @@ public class UserRepositoryTest {
     @Test
     public void testDeleteByUsername() {
         String username = "test";
+        when(userRepository.findByUsername(Mockito.anyString())).thenReturn(new User());
         userService.deleteByUsername(username);
         verify(userRepository, times(1)).deleteByUsername(username);
     }

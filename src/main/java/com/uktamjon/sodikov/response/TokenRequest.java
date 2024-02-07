@@ -1,4 +1,4 @@
-package com.uktamjon.sodikov.reponse;
+package com.uktamjon.sodikov.response;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

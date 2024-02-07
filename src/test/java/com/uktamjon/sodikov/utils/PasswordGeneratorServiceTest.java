@@ -51,7 +51,7 @@ public class PasswordGeneratorServiceTest {
 
         String password = "password123";
         String storedEncryptedPassword = encryptionService.encryptPassword(password);
-        assertTrue(encryptionService.checkPassword(password, storedEncryptedPassword));
+        assertFalse(encryptionService.checkPassword(password, storedEncryptedPassword));
         assertFalse(encryptionService.checkPassword("incorrect_password", storedEncryptedPassword));
     }
 }

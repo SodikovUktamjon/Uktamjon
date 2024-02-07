@@ -4,20 +4,20 @@ import com.uktamjon.sodikov.domains.User;
 import com.uktamjon.sodikov.repository.UserRepository;
 import com.uktamjon.sodikov.services.UserService;
 import com.uktamjon.sodikov.utils.PasswordGeneratorService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
     @Mock
@@ -29,93 +29,176 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    @BeforeEach
-    void setUp() {
-        userRepository = mock(UserRepository.class);
-        passwordGenerator = mock(PasswordGeneratorService.class);
-        userService = new UserService(userRepository, passwordGenerator);
-    }
-
-
     @Test
-    public void testCreateUser_UniqueUsername() {
-        User user = new User();
-        user.setFirstName("John");
-        user.setLastName("Doe");
+    public void testCreateUser() {
+        User testUser = User.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .build();
 
-        List<User> existingUsers = new ArrayList<>();
-        when(userRepository.findAllByUsernameContains("John.Doe")).thenReturn(existingUsers);
         when(passwordGenerator.generateRandomPassword(10)).thenReturn("randomPassword");
-        when(userRepository.save(user)).thenReturn(user);
-        User createdUser = userService.createUser(user);
-        System.out.println(createdUser.getUsername());
+        when(passwordGenerator.encryptPassword("randomPassword")).thenReturn("hashedPassword");
+        when(userRepository.save(Mockito.any())).thenReturn(testUser);
+
+        User createdUser = userService.createUser(testUser);
+
         assertEquals("John.Doe", createdUser.getUsername());
+        assertNotNull(createdUser.getPassword());
+        assertFalse(createdUser.isActive());
+        verify(userRepository, times(1)).save(Mockito.any());
     }
-
 
     @Test
-    public void testCreateUser_NonUniqueUsername() {
-        User user = new User();
-        user.setFirstName("John");
-        user.setLastName("Doe");
+    public void testGenerateUserName() {
+        String firstName = "John";
+        String lastName = "Doe";
+        String baseUsername = firstName + "." + lastName;
 
-        List<User> existingUsers = new ArrayList<>();
-        existingUsers.add(new User());
-        when(userRepository.findAllByUsernameContains("John.Doe")).thenReturn(existingUsers);
-        when(passwordGenerator.generateRandomPassword(10)).thenReturn("randomPassword");
-        when(userRepository.save(user)).thenReturn(user);
-        User createdUser = userService.createUser(user);
-        assertEquals("John.Doe1", createdUser.getUsername());
+        when(userRepository.existsByUsername(baseUsername)).thenReturn(true);
+
+        String generatedUsername = userService.generateUserName(firstName, lastName);
+
+        assertEquals("John.Doe1", generatedUsername);
+        verify(userRepository, times(1)).existsByUsername(baseUsername);
     }
-
 
     @Test
     public void testGetAllUsers() {
-        List<User> expectedUsers = new ArrayList<>();
-        expectedUsers.add(new User());
-        expectedUsers.add(new User());
-        when(userRepository.findAll()).thenReturn(expectedUsers);
-        List<User> retrievedUsers = userService.getAllUsers();
-        assertEquals(expectedUsers, retrievedUsers);
+        when(userRepository.findAll()).thenReturn(List.of(User.builder().firstName("John").lastName("Doe").build()));
+
+        List<User> allUsers = userService.getAllUsers();
+
+        assertEquals(1, allUsers.size());
+        verify(userRepository, times(1)).findAll();
+    }
+
+
+    @Test
+    public void testGetUserById() {
+        User testUser = User.builder()
+                .id(1)
+                .firstName("John")
+                .lastName("Doe")
+                .build();
+
+        when(userRepository.findById(1)).thenReturn(Optional.of(testUser));
+
+        User retrievedUser = userService.getUserById(1);
+
+        assertNotNull(retrievedUser);
+        assertEquals(testUser, retrievedUser);
+        verify(userRepository, times(1)).findById(1);
     }
 
     @Test
-    public void testGetUserById_UserExists() {
-        int userId = 1;
-        User expectedUser = new User();
-        expectedUser.setId(userId);
-        when(userRepository.findById(userId)).thenReturn(Optional.of(expectedUser));
-        User retrievedUser = userService.getUserById(userId);
-        assertEquals(expectedUser, retrievedUser);
+    public void testUpdateUser() {
+        User testUser = User.builder()
+                .id(1)
+                .firstName("John")
+                .lastName("Doe")
+                .build();
+
+        when(userRepository.findById(1)).thenReturn(Optional.of(testUser));
+        when(userRepository.save(Mockito.any())).thenReturn(testUser);
+
+        userService.updateUser(testUser);
+
+        verify(userRepository, times(1)).findById(1);
+        verify(userRepository, times(1)).save(Mockito.any());
     }
 
     @Test
-    public void testGetUserById_UserDoesNotExist() {
-        int userId = 1;
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-        assertThrows(UsernameNotFoundException.class, () -> userService.getUserById(userId));
+    public void testUpdateUserWithPassword() {
+        User testUser = User.builder()
+                .id(1)
+                .firstName("John")
+                .lastName("Doe")
+                .password("old_password")
+                .build();
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+
+        when(userRepository.save(Mockito.any())).thenReturn(testUser);
+
+        userService.updateUser(testUser);
+        verify(userRepository, times(1)).findById(testUser.getId());
+        verify(passwordGenerator,times(1)).encryptPassword(Mockito.any());
+        verify(userRepository, times(1)).save(Mockito.any());
     }
 
-    @Test
-    public void testUpdateUser_UserExists() {
-        User user = new User();
-        user.setId(1);
-        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(userRepository.existsById(user.getId())).thenReturn(true);
-        userService.updateUser(user);
-    }
-
-    @Test
-    public void testUpdateUser_UserDoesNotExist() {
-        User user = new User();
-        user.setId(1);
-        when(userRepository.existsById(user.getId())).thenReturn(false);
-        assertThrows(UsernameNotFoundException.class, () -> userService.updateUser(user));
-    }
 
     @Test
     public void testDeleteUserById() {
         int userId = 1;
+
         userService.deleteUserById(userId);
+
+        verify(userRepository, times(1)).deleteById(userId);
+    }
+
+    @Test
+    public void testGetUserByUsername() {
+        User testUser = User.builder()
+                .username("John.Doe")
+                .build();
+
+        when(userRepository.findByUsername("John.Doe")).thenReturn(testUser);
+
+        User retrievedUser = userService.getUserByUsername("John.Doe");
+
+        assertNotNull(retrievedUser);
+        assertEquals(testUser, retrievedUser);
+        verify(userRepository, times(1)).findByUsername("John.Doe");
+    }
+
+
+    @Test
+    void testChangePasswordWithValidPasswordAndUsername() {
+        User user = new User();
+        user.setUsername("john_doe");
+        user.setPassword("old_password");
+
+        when(userRepository.findByUsername("john_doe")).thenReturn(user);
+        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        assertTrue(userService.changePassword("P@ssw0rd", "john_doe"));
+    }
+
+    @Test
+    void testChangePasswordWithInvalidPassword() {
+        User user = new User();
+        user.setUsername("john_doe");
+        user.setPassword("old_password");
+
+        when(userRepository.findByUsername("john_doe")).thenReturn(user);
+
+        assertFalse(userService.changePassword("weakpassword", "john_doe"));
+        assertEquals("old_password", user.getPassword());
+    }
+
+    @Test
+    void testActivateAndDeactivateByUsername() {
+        User user = new User();
+        user.setUsername("john_doe");
+        user.setActive(true);
+
+        when(userRepository.findByUsername("john_doe")).thenReturn(user);
+        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        assertTrue(userService.activateAndDeactivate("john_doe"));
+        assertFalse(user.isActive());
+    }
+
+    @Test
+    void testDeleteByUsername() {
+        User user = new User();
+        user.setUsername("john_doe");
+
+        when(userRepository.findByUsername("john_doe")).thenReturn(user);
+
+        userService.deleteByUsername("john_doe");
+
+        verify(userRepository, times(1)).deleteByUsername("john_doe");
     }
 }

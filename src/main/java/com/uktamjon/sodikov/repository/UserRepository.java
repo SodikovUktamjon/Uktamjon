@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
+
+    boolean existsByUsername(String username);
     List<User> findAllByUsernameContains(String username);
 
     @NotNull List<User> findAll();

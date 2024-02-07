@@ -72,7 +72,6 @@ public class TrainerServiceTest {
     @Test
     public void testUpdateTrainer_ExistingTrainingTypeAndTrainer() {
         Trainer trainer = new Trainer();
-        User user = new User();
 
 
         when(trainingTypeService.getTrainingTypeById(trainer.getSpecialization())).thenReturn(new TrainingType());
@@ -103,7 +102,7 @@ public class TrainerServiceTest {
 
         boolean updated = trainerService.updateTrainer(trainer);
 
-        assertTrue(updated);
+            assertTrue(updated);
 
         verify(userService, times(1)).updateUser(user);
         verify(trainerRepository, times(1)).save(trainer);
@@ -114,9 +113,10 @@ public class TrainerServiceTest {
         int trainerId = 1;
         Trainer expectedTrainer = new Trainer();
         expectedTrainer.setId(trainerId);
-        when(trainerRepository.findById(trainerId)).thenReturn(Optional.of(expectedTrainer));
+        when(trainerRepository.findByUserId(trainerId)).thenReturn(expectedTrainer);
         Trainer retrievedTrainer = trainerService.getTrainer(trainerId);
         assertEquals(expectedTrainer, retrievedTrainer);
+
     }
 
     @Test

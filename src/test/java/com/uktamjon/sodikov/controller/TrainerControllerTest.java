@@ -42,6 +42,17 @@ class TrainerControllerTest {
         verify(trainerService).createTrainer(trainer);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
     }
+    @Test
+    void testCreateTrainerBadRequest() {
+        Trainer trainer = new Trainer();
+        when(trainerService.createTrainer(trainer)).thenReturn(null);
+
+        ResponseEntity<CreateResponse> responseEntity = trainerController.createTrainer(trainer);
+
+        verify(customMetricsService).recordCustomMetric(1);
+        verify(trainerService).createTrainer(trainer);
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
 
     @Test
     void testUpdateTrainer() {
@@ -53,6 +64,17 @@ class TrainerControllerTest {
         verify(customMetricsService).recordCustomMetric(1);
         verify(trainerService).updateTrainer(trainer);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+    @Test
+    void testUpdateTrainerBadRequest() {
+        Trainer trainer = new Trainer();
+        when(trainerService.updateTrainer(trainer)).thenReturn(false);
+
+        ResponseEntity<String> responseEntity = trainerController.updateTrainer(trainer);
+
+        verify(customMetricsService).recordCustomMetric(1);
+        verify(trainerService).updateTrainer(trainer);
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
     }
 
     @Test
@@ -69,6 +91,17 @@ class TrainerControllerTest {
     }
 
     @Test
+    void testGetTrainerNotFound() {
+        int trainerId = 1;
+        when(trainerService.getTrainer(trainerId)).thenReturn(null);
+
+        ResponseEntity<Trainer> responseEntity = trainerController.getTrainer(trainerId);
+
+        verify(customMetricsService).recordCustomMetric(1);
+        verify(trainerService).getTrainer(trainerId);
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
+    @Test
     void testGetTrainerByUsername() {
         String username = "testUser";
         Trainer trainer = new Trainer();
@@ -81,6 +114,17 @@ class TrainerControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
+    @Test
+    void testGetTrainerByUsernameNotFound() {
+        String username = "testUser";
+        when(trainerService.getTrainer(username)).thenReturn(null);
+
+        ResponseEntity<Trainer> responseEntity = trainerController.getTrainerByUsername(username);
+
+        verify(customMetricsService).recordCustomMetric(1);
+        verify(trainerService).getTrainer(username);
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
     @Test
     void testGetAllTrainers() {
         List<Trainer> trainers = Arrays.asList(new Trainer(), new Trainer());

@@ -5,7 +5,6 @@ import com.uktamjon.sodikov.repository.UserRepository;
 import com.uktamjon.sodikov.utils.PasswordGeneratorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,17 +22,13 @@ public class UserService {
 
     public User createUser(User user) {
         log.info("Creating user {}", user);
-        String username = user.getFirstName() + "." + user.getLastName();
-        List<User> allByUsernameContains = userRepository.findAllByUsernameContains(username);
-
-        if (allByUsernameContains.size() == 1) {
-            user.setUsername(username + 1);
-        } else if (allByUsernameContains.size() > 1) {
-            user.setUsername(username + (allByUsernameContains.size() - 1));
-        } else user.setUsername(username);
-        user.setPassword(passwordGenerator.encryptPassword(passwordGenerator.generateRandomPassword(10)));
+        user.setUsername(generateUserName(user.getFirstName(), user.getLastName()));
+        String s = passwordGenerator.generateRandomPassword(10);
+        user.setPassword(passwordGenerator.encryptPassword(s));
         log.info("User created {}", user);
-        return userRepository.save(user);
+        User save = userRepository.save(user);
+        save.setPassword(s);
+        return save;
     }
 
     public List<User> getAllUsers() {
@@ -43,17 +38,13 @@ public class UserService {
 
     public User getUserById(int userId) {
         log.info("Getting user by id {}", userId);
-        return userRepository.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return userRepository.findById(userId).orElse(null);
     }
 
     public void updateUser(User user) {
         log.info("Updating user {}", user);
         User userById = getUserById(user.getId());
 
-        if (userById == null) {
-            log.error("User not found {}", user);
-            throw new UsernameNotFoundException("User not found");
-        }
         if (user.getPassword() != null) {
             user.setPassword(passwordGenerator.encryptPassword(user.getPassword()));
         }
@@ -136,9 +127,29 @@ public class UserService {
     public void deleteByUsername(String username) {
         if (getUserByUsername(username) == null) {
             log.error("User not found by username: {}", username);
+            return;
         }
         log.info("Deleting user by username {}", username);
         userRepository.deleteByUsername(username);
     }
+
+    public  String generateUserName(String firstName, String lastName) {
+        String baseUsername = firstName + "." + lastName;
+
+        boolean usernameExists = userRepository.existsByUsername(baseUsername);
+
+        String generatedUsername = usernameExists ? baseUsername + getUserNameSuffix() : baseUsername;
+
+        log.info("Generated username: {}", generatedUsername);
+        return generatedUsername;
+    }
+    private static Long userNameSuffix = 0L;
+
+    public static Long getUserNameSuffix() {
+        userNameSuffix++;
+        log.debug("Generated User Name Suffix: {}", userNameSuffix);
+        return userNameSuffix;
+    }
+
 
 }

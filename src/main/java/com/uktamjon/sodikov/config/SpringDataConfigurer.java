@@ -1,7 +1,8 @@
-package com.uktamjon.sodikov;
+package com.uktamjon.sodikov.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -18,6 +19,7 @@ import java.util.Properties;
 @Configuration
 @RequiredArgsConstructor
 @PropertySource("classpath:application.properties")
+@ComponentScan("com.uktamjon.sodikov.services")
 public class SpringDataConfigurer {
 
     private final Environment env;
