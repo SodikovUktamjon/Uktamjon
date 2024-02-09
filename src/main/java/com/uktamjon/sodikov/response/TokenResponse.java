@@ -15,9 +15,4 @@ public class TokenResponse {
     private String refreshToken;
     private Date refreshTokenExpiry;
 
-    public TokenResponse(Date accessTokenExpiry, Date refreshTokenExpiry) {
-        this.accessTokenExpiry = accessTokenExpiry;
-        this.refreshTokenExpiry = refreshTokenExpiry;
-    }
-
 }

@@ -26,83 +26,82 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
-//    @Mock
-//    private PasswordGeneratorService passwordGeneratorService;
-//
-//    @Mock
-//    private UserRepository authUserRepository;
-//
-//    @Mock
-//    private JwtUtils jwtUtils;
-//
-//    @Mock
-//    private AuthenticationManager authenticationManager;
-//
-//    @Mock
-//    private BruteForceProtectionService bruteForceProtectionService;
-//
-//    @InjectMocks
-//    private AuthService authService;
-//
-//    @BeforeEach
-//    void setUp() {
-//        AuthService authService = new AuthService(passwordGeneratorService, authUserRepository, jwtUtils, authenticationManager, bruteForceProtectionService);
-//    }
-//
-//    @Test
-//    void login_Success() {
-//        CreateAuthUserDTO dto = CreateAuthUserDTO.builder()
-//                .username("username")
-//                .password("password")
-//                .build();
-//
-//        when(bruteForceProtectionService.isUserBlocked(dto.getUsername())).thenReturn(false);
-//        when(authenticationManager.authenticate(any())).thenReturn(null);
-//        when(authUserRepository.findByUsername(Mockito.any())).thenReturn(User.builder()
-//                .password(dto.getPassword())
-//                .username(dto.getUsername())
-//                .build());
-//
-//        when(passwordGeneratorService.checkPassword(any(), any())).thenReturn(true);
-//        when(jwtUtils.generateToken(any())).thenReturn(TokenResponse.builder().accessToken("access-token").build());
-//
-//        GetTokenDTO result = authService.login(dto);
-//
-//        assertNotNull(result);
-//        assertEquals("access-token", result.getToken());
-//        verify(bruteForceProtectionService, never()).recordFailedLogin(any());
-//    }
-//
-//    @Test
-//    void login_Failure() {
-//        CreateAuthUserDTO dto = CreateAuthUserDTO.builder()
-//                .username("username")
-//                .password("password")
-//                .build();
-//
-//        when(bruteForceProtectionService.isUserBlocked(dto.getUsername())).thenReturn(false);
-//        when(authenticationManager.authenticate(any())).thenReturn(null);
-//        when(authUserRepository.findByUsername(dto.getUsername())).thenReturn(User.builder().build());
-//        when(passwordGeneratorService.checkPassword(any(), any())).thenReturn(false);
-//        when(jwtUtils.generateToken(any())).thenReturn(TokenResponse.builder().accessToken("access-token").build());
-//        GetTokenDTO result = authService.login(dto);
-//
-//        assertNull(result);
-//        verify(bruteForceProtectionService, times(1)).recordFailedLogin(dto.getUsername());
-//    }
-//
-//    @Test
-//    void login_UserBlocked() {
-//        CreateAuthUserDTO dto = CreateAuthUserDTO.builder()
-//                .username("blockedUser")
-//                .password("password")
-//                .build();
-//
-//        when(bruteForceProtectionService.isUserBlocked(dto.getUsername())).thenReturn(true);
-//
-//        GetTokenDTO result = authService.login(dto);
-//
-//        assertNull(result);
-//        verify(bruteForceProtectionService, never()).recordFailedLogin(any());
-//    }
+    @Mock
+    private PasswordGeneratorService passwordGeneratorService;
+
+    @Mock
+    private UserRepository authUserRepository;
+
+    @Mock
+    private JwtUtils jwtUtils;
+
+    @Mock
+    private AuthenticationManager authenticationManager;
+
+    @Mock
+    private BruteForceProtectionService bruteForceProtectionService;
+
+    @InjectMocks
+    private AuthService authService;
+
+    @BeforeEach
+    void setUp() {
+        AuthService authService = new AuthService(passwordGeneratorService, authUserRepository, jwtUtils, authenticationManager, bruteForceProtectionService);
+    }
+
+    @Test
+    void login_Success() {
+        CreateAuthUserDTO dto = CreateAuthUserDTO.builder()
+                .username("username")
+                .password("password")
+                .build();
+
+        when(bruteForceProtectionService.isUserBlocked(dto.getUsername())).thenReturn(false);
+        when(authenticationManager.authenticate(any())).thenReturn(null);
+        when(authUserRepository.findByUsername(Mockito.any())).thenReturn(User.builder()
+                .password(dto.getPassword())
+                .username(dto.getUsername())
+                .build());
+
+        when(passwordGeneratorService.checkPassword(any(), any())).thenReturn(true);
+        when(jwtUtils.generateToken(any())).thenReturn(TokenResponse.builder().accessToken("access-token").build());
+
+        GetTokenDTO result = authService.login(dto);
+
+        assertNotNull(result);
+        assertEquals("access-token", result.getToken());
+        verify(bruteForceProtectionService, never()).recordFailedLogin(any());
+    }
+
+    @Test
+    void login_Failure() {
+        CreateAuthUserDTO dto = CreateAuthUserDTO.builder()
+                .username("username")
+                .password("password")
+                .build();
+
+        when(bruteForceProtectionService.isUserBlocked(dto.getUsername())).thenReturn(false);
+        when(authenticationManager.authenticate(any())).thenReturn(null);
+        when(authUserRepository.findByUsername(dto.getUsername())).thenReturn(User.builder().build());
+        when(passwordGeneratorService.checkPassword(any(), any())).thenReturn(false);
+        GetTokenDTO result = authService.login(dto);
+
+        assertNull(result);
+        verify(bruteForceProtectionService, times(1)).recordFailedLogin(dto.getUsername());
+    }
+
+    @Test
+    void login_UserBlocked() {
+        CreateAuthUserDTO dto = CreateAuthUserDTO.builder()
+                .username("blockedUser")
+                .password("password")
+                .build();
+
+        when(bruteForceProtectionService.isUserBlocked(dto.getUsername())).thenReturn(true);
+
+        GetTokenDTO result = authService.login(dto);
+
+        assertNull(result);
+        verify(bruteForceProtectionService, never()).recordFailedLogin(any());
+    }
 }

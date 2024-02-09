@@ -18,7 +18,7 @@ import java.util.Properties;
 
 @Configuration
 @RequiredArgsConstructor
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:application-dev.properties")
 @ComponentScan("com.uktamjon.sodikov.services")
 public class SpringDataConfigurer {
 

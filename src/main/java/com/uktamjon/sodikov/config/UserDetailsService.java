@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
 
-    private     final UserRepository authUserRepository;
+    private final UserRepository authUserRepository;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
 
@@ -30,7 +30,7 @@ public class UserDetailsService implements org.springframework.security.core.use
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User authUser = authUserRepository.findByUsername(username) ;
+        User authUser = authUserRepository.findByUsername(username);
         return new UserDetails(authUser);
     }
 
@@ -51,7 +51,7 @@ public class UserDetailsService implements org.springframework.security.core.use
         }
         String username = jwtUtils.getUsername(refreshToken, TokenType.REFRESH);
         authUserRepository.findAuthIdByUsername(username);
-        return TokenResponse.builder().refreshToken(refreshToken).refreshTokenExpiry(jwtUtils.getExpiry(refreshToken,TokenType.REFRESH)).build();
+        return TokenResponse.builder().refreshToken(refreshToken).refreshTokenExpiry(jwtUtils.getExpiry(refreshToken, TokenType.REFRESH)).build();
 
     }
 

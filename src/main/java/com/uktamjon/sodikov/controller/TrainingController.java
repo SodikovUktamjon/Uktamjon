@@ -1,9 +1,6 @@
 package com.uktamjon.sodikov.controller;
 
-import com.uktamjon.sodikov.domains.Trainer;
 import com.uktamjon.sodikov.domains.Training;
-import com.uktamjon.sodikov.dtos.TrainerWorkload;
-import com.uktamjon.sodikov.services.TrainerWorkloadFeignClient;
 import com.uktamjon.sodikov.services.TrainingService;
 import com.uktamjon.sodikov.utils.CustomMetricsService;
 import lombok.RequiredArgsConstructor;

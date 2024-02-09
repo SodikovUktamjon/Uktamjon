@@ -86,27 +86,5 @@ class JwtUtilsTest {
         assertFalse(jwtUtils.isValid(token, TokenType.ACCESS));
     }
 
-//    @Test
-//    void getUsername_shouldReturnUsernameFromToken() {
-//        when(jwtUtils.getClaims(anyString(), TokenType.ACCESS)).thenReturn(Jwts.parserBuilder()
-//                .setSigningKey(jwtUtils.signKey(TokenType.ACCESS))
-//                .build()
-//                .parseClaimsJws("validAccessTokenToken")
-//                .getBody());
-//        when(claims.getSubject()).thenReturn("testUser");
-//
-//        String username = jwtUtils.getUsername("validAccessTokenToken", TokenType.ACCESS);
-//
-//        assertEquals("testUser", username);
-//    }
-//
-//    @Test
-//    void getExpiry_shouldReturnExpiryFromToken() {
-//        when(jwtUtils.getClaims(anyString(), eq(TokenType.ACCESS))).thenReturn(claims);
-//        when(claims.getExpiration()).thenReturn(new Date(System.currentTimeMillis() + 3600000L));
-//
-//        Date expiry = jwtUtils.getExpiry("validAccessToken", TokenType.ACCESS);
-//
-//        assertNotNull(expiry);
-//    }
+
 }

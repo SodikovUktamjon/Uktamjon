@@ -18,9 +18,6 @@ public class Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
-        PasswordGeneratorService passwordGeneratorService=new PasswordGeneratorService();
-        passwordGeneratorService.encryptPassword("password");
-        passwordGeneratorService.checkPassword("password", new BCryptPasswordEncoder().encode("password"));
 
     }
 }

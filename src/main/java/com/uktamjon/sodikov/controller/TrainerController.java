@@ -82,4 +82,6 @@ public class TrainerController {
         List<Trainer> trainers = trainerService.getTrainersNotAssignedAndActive();
         return new ResponseEntity<>(trainers, HttpStatus.OK);
     }
+
+
 }
