@@ -56,9 +56,9 @@ public class PasswordGeneratorService {
     }
 
     public boolean checkPassword(String enteredPassword, String storedEncryptedPassword) {
-//        String encryptedEnteredPassword = encryptPassword(enteredPassword);
         return enteredPassword.equals(storedEncryptedPassword);
     }
 
 
+    
 }
