@@ -26,8 +26,7 @@ public class User {
     private String firstName;
     @NotNull
     private String lastName;
-    @Builder.Default
-    private boolean isActive = false;
+    private boolean isActive;
 
     private String role;
     private String createdAt;

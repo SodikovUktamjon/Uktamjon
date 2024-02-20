@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -28,9 +27,14 @@ public class Training {
     @NotNull
     private String trainingName;
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    private Trainer trainerId;
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    private List<Trainee> traineeId;
+    private Trainer trainer;
+    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "training_trainee",
+            joinColumns = @JoinColumn(name = "training_id"),
+            inverseJoinColumns = @JoinColumn(name = "trainee_id")
+    )
+    private List<Trainee> trainees;
     @NotNull
     private LocalDateTime trainingDate;
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)

@@ -23,13 +23,13 @@ class TraineeRepositoryTest {
     @Test
     void testFindByUserId() {
         Trainee trainee = new Trainee();
-        trainee.setUserId(User.builder().id(1).build());
+        trainee.setUser(User.builder().id(1).build());
         traineeRepository.save(trainee);
         when(traineeRepository.findByUserId(1)).thenReturn(trainee);
         Trainee foundTrainee = traineeRepository.findByUserId(1);
 
         assertNotNull(foundTrainee);
-        assertEquals(1, foundTrainee.getUserId().getId());
+        assertEquals(1, foundTrainee.getUser().getId());
     }
 
     @Test

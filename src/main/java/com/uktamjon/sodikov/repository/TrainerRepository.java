@@ -11,10 +11,7 @@ import java.util.List;
 public interface TrainerRepository extends JpaRepository<Trainer, Integer> {
     Trainer findByUserId(int userId);
 
-    @NotNull List<Trainer> findAll();
-
-
-    @Query("select t from Trainer t where t.userId.isActive = ?1 and t.id not in(select f from Training f where f.trainerId.id is not null)")
+    @Query("select t from Trainer t where t.user.isActive = ?1 and t.id not in(select f from Training f where f.trainer.id is not null)")
     List<Trainer> findAllByUserId_Active(boolean active);
 
 

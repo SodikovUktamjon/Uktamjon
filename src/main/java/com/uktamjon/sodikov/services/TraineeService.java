@@ -6,7 +6,6 @@ import com.uktamjon.sodikov.dtos.CreateResponse;
 import com.uktamjon.sodikov.repository.TraineeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,23 +21,23 @@ public class TraineeService {
 
 
     public CreateResponse createTrainee(Trainee trainee) {
-        if (userService.getUserByUsername(trainee.getUserId().getUsername()) != null) {
+        if (userService.getUserByUsername(trainee.getUser().getUsername()) != null) {
             log.info("User with this username already exists");
             return null;
         }
-        User user1 = userService.createUser(trainee.getUserId());
-        trainee.setUserId(user1);
+        User user1 = userService.createUser(trainee.getUser());
+        trainee.setUser(user1);
         log.info("Trainee created: {}", trainee);
         Trainee save = traineeRepository.save(trainee);
         return CreateResponse.builder()
-                .username(save.getUserId().getUsername())
-                .password(save.getUserId().getPassword())
+                .username(save.getUser().getUsername())
+                .password(save.getUser().getPassword())
                 .build();
     }
 
     public Trainee updateTrainee(Trainee trainee) {
-        if (userService.getUserById(trainee.getUserId().getId()) != null && traineeRepository.existsById(trainee.getId())) {
-            userService.updateUser(trainee.getUserId());
+        if (userService.getUserById(trainee.getUser().getId()) != null && traineeRepository.existsById(trainee.getId())) {
+            userService.updateUser(trainee.getUser());
             log.info("Trainee updated: {}", trainee);
             return traineeRepository.save(trainee);
         }
@@ -48,7 +47,7 @@ public class TraineeService {
 
     public void deleteTrainee(int traineeId) {
         Trainee traineeNotFound = traineeRepository.findById(traineeId).orElseThrow(()->new NullPointerException("User Not Found"));
-        userService.deleteUserById(Objects.requireNonNull(traineeNotFound).getUserId().getId());
+        userService.deleteUserById(Objects.requireNonNull(traineeNotFound).getUser().getId());
         traineeRepository.deleteById(traineeId);
         log.info("Trainee deleted: {}", traineeId);
     }
