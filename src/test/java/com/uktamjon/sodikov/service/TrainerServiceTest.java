@@ -46,11 +46,11 @@ public class TrainerServiceTest {
     public void testCreateTrainer_ExistingTrainingTypeAndUser() {
         Trainer trainer = new Trainer();
         User user = new User();
-        trainer.setUserId(user);
+        trainer.setUser(user);
 
         when(trainingTypeService.getTrainingTypeById(trainer.getSpecialization())).thenReturn(new TrainingType());
 
-        when(userService.getUserById(trainer.getUserId().getId())).thenReturn(new User());
+        when(userService.getUserById(trainer.getUser().getId())).thenReturn(new User());
 
         CreateResponse createdTrainer = trainerService.createTrainer(trainer);
         assertNull(createdTrainer);
@@ -60,14 +60,14 @@ public class TrainerServiceTest {
     public void testCreateTrainer_NonExistingTrainingTypeAndUser() {
         Trainer trainer = new Trainer();
         User user = new User();
-        trainer.setUserId(user);
+        trainer.setUser(user);
         when(trainingTypeService.getTrainingTypeById(trainer.getSpecialization())).thenReturn(null);
-        when(userService.getUserById(trainer.getUserId().getId())).thenReturn(null);
+        when(userService.getUserById(trainer.getUser().getId())).thenReturn(null);
         when(userService.createUser(user)).thenReturn(user);
         when(trainerRepository.save(trainer)).thenReturn(trainer);
         CreateResponse createdTrainer = trainerService.createTrainer(trainer);
-        assertEquals(trainer.getUserId().getUsername(), createdTrainer.getUsername());
-        assertEquals(trainer.getUserId().getPassword(), createdTrainer.getPassword());
+        assertEquals(trainer.getUser().getUsername(), createdTrainer.getUsername());
+        assertEquals(trainer.getUser().getPassword(), createdTrainer.getPassword());
     }
     @Test
     public void testUpdateTrainer_ExistingTrainingTypeAndTrainer() {
@@ -90,7 +90,7 @@ public class TrainerServiceTest {
     public void testUpdateTrainer_NonExistingTrainingTypeAndExistingTrainer() {
         Trainer trainer = new Trainer();
         User user = new User();
-        trainer.setUserId(user);
+        trainer.setUser(user);
 
         when(trainingTypeService.getTrainingTypeById(trainer.getSpecialization())).thenReturn(null);
 

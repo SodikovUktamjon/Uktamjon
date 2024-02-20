@@ -25,17 +25,17 @@ public class TrainerService {
             log.error("Trainer not created: {}", trainer);
             return null;
         }
-        if (userService.getUserById(trainer.getUserId().getId()) != null) {
+        if (userService.getUserById(trainer.getUser().getId()) != null) {
             log.error("Trainer not created: {}", trainer);
             return null;
         }
-        User user1 = userService.createUser(trainer.getUserId());
-        trainer.setUserId(user1);
+        User user1 = userService.createUser(trainer.getUser());
+        trainer.setUser(user1);
         log.info("Trainer created: {}", trainer);
         Trainer save = trainerRepository.save(trainer);
         return CreateResponse.builder()
-                .username(save.getUserId().getUsername())
-                .password(save.getUserId().getPassword())
+                .username(save.getUser().getUsername())
+                .password(save.getUser().getPassword())
                 .build();
     }
 
@@ -46,7 +46,7 @@ public class TrainerService {
         }
         if (trainerRepository.existsById(trainer.getId())) {
 
-            userService.updateUser(trainer.getUserId());
+            userService.updateUser(trainer.getUser());
             trainerRepository.save(trainer);
             log.info("Trainer updated: {}", trainer);
             return true;

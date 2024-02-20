@@ -75,4 +75,17 @@ class TrainingControllerTest {
         verify(trainingService).getTraining(trainingId);
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
+
+    @Test
+    void testDeleteTraining() {
+        int trainingId = 1;
+
+        doNothing().when(trainingService).deleteTraining(trainingId);
+
+        ResponseEntity<Void> responseEntity = trainingController.deleteTraining(trainingId);
+
+        verify(customMetricsService).recordCustomMetric(1);
+        verify(trainingService).deleteTraining(trainingId);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
 }

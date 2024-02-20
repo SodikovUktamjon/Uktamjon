@@ -20,5 +20,5 @@ public class Trainer {
     private int id;
     private int specialization;
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    private User userId;
+    private User user;
 }

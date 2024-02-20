@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
@@ -42,10 +41,10 @@ public class TraineeServiceTest {
         Trainee trainee = new Trainee();
         User user = new User();
         user.setUsername("1");
-        trainee.setUserId(user);
+        trainee.setUser(user);
 
 
-        when(userService.getUserByUsername(trainee.getUserId().getUsername())).thenReturn(user);
+        when(userService.getUserByUsername(trainee.getUser().getUsername())).thenReturn(user);
         when(traineeRepository.save(trainee)).thenReturn(trainee);
         CreateResponse createdTrainee = traineeService.createTrainee(trainee);
 
@@ -58,12 +57,12 @@ public class TraineeServiceTest {
         User user = new User();
         user.setUsername("John.Doe");
         user.setPassword("Password");
-        trainee.setUserId(user);
+        trainee.setUser(user);
         when(traineeRepository.save(trainee)).thenReturn(trainee);
-        when(userService.getUserById(trainee.getUserId().getId())).thenReturn(null);
+        when(userService.getUserById(trainee.getUser().getId())).thenReturn(null);
         when(userService.createUser(user)).thenReturn(user);
         CreateResponse createdTrainee = traineeService.createTrainee(trainee);
-        assertEquals(trainee.getUserId().getUsername(), createdTrainee.getUsername());
+        assertEquals(trainee.getUser().getUsername(), createdTrainee.getUsername());
     }
     @Test
     public void testUpdateTrainee_UserAndTraineeExist() {
@@ -72,10 +71,10 @@ public class TraineeServiceTest {
 
         User user = new User();
         user.setId(1);
-        trainee.setUserId(user);
+        trainee.setUser(user);
 
 
-        when(userService.getUserById(trainee.getUserId().getId())).thenReturn(user);
+        when(userService.getUserById(trainee.getUser().getId())).thenReturn(user);
         when(traineeRepository.existsById(trainee.getId())).thenReturn(true);
         when(traineeRepository.save(trainee)).thenReturn(trainee);
         Trainee updatedTrainee = traineeService.updateTrainee(trainee);
@@ -90,7 +89,7 @@ public class TraineeServiceTest {
 
         Trainee trainee = new Trainee();
         trainee.setId(1);
-        trainee.setUserId(User.builder().id(1).build());
+        trainee.setUser(User.builder().id(1).build());
 
 
         when(traineeRepository.findById(1)).thenReturn(Optional.of(trainee));

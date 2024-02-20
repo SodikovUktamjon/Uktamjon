@@ -27,6 +27,13 @@ public class TrainingController {
         }
     }
 
+    @DeleteMapping("/{trainingId}")
+    public ResponseEntity<Void> deleteTraining(@PathVariable int trainingId) {
+        customMetricsService.recordCustomMetric(1);
+        trainingService.deleteTraining(trainingId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/{trainingId}")
     public ResponseEntity<Training> getTraining(@PathVariable int trainingId) {
         customMetricsService.recordCustomMetric(1);
