@@ -37,4 +37,12 @@ public class TrainingController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @DeleteMapping("/{trainingId}")
+    public ResponseEntity<Void> deleteTraining(@PathVariable int trainingId) {
+        customMetricsService.recordCustomMetric(1);
+        trainingService.deleteTraining(trainingId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

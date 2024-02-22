@@ -1,7 +1,11 @@
 package com.uktamjon.sodikov.service;
 
 import com.uktamjon.sodikov.domains.*;
+import com.uktamjon.sodikov.dtos.TrainerWorkload;
+import com.uktamjon.sodikov.repository.TraineeRepository;
+import com.uktamjon.sodikov.repository.TrainerRepository;
 import com.uktamjon.sodikov.repository.TrainingRepository;
+import com.uktamjon.sodikov.repository.TrainingTypeRepository;
 import com.uktamjon.sodikov.services.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
@@ -22,13 +27,13 @@ public class TrainingServiceTest {
     @Mock
     private TrainingRepository trainingRepository;
 
-    @Mock
-    private TrainerService trainerService;
 
     @Mock
-    private TrainingTypeService trainingTypeService;
+    private TraineeRepository traineeRepository;
     @Mock
-    private TraineeService traineeService;
+    private TrainerRepository trainerRepository;
+    @Mock
+    private TrainingTypeRepository trainingTypeRepository;
 
 
 
@@ -39,112 +44,82 @@ public class TrainingServiceTest {
     @BeforeEach
     void setUp() {
         trainingRepository = mock(TrainingRepository.class);
-        trainerService = mock(TrainerService.class);
         workloadFeignClient = mock(TrainerWorkloadFeignClient.class);
-        trainingService = new TrainingService(trainingRepository,workloadFeignClient,trainerService);
+        trainerRepository = mock(TrainerRepository.class);
+        trainingTypeRepository = mock(TrainingTypeRepository.class);
+        traineeRepository = mock(TraineeRepository.class);
+        trainingService = new TrainingService(trainingRepository,workloadFeignClient,traineeRepository,trainerRepository,trainingTypeRepository);
     }
 
 
     @Test
-    public void testCreateTraining_AllServicesReturnNull() {
+    public void testCreateTraining_Successful() {
         Training training = new Training();
-        Trainer trainer = Trainer.builder().build();
-        training.setTrainerId(trainer);
-        when(trainerService.getTrainer(training.getTrainerId().getId())).thenReturn(null);
+        Trainer trainer = new Trainer();
+        List<Trainee> trainees = new ArrayList<>();
+
+        when(trainerRepository.findById(any())).thenReturn(Optional.of(trainer));
+        when(trainingTypeRepository.findById(any())).thenReturn(Optional.of(new TrainingType()));
+        when(traineeRepository.findById(any())).thenReturn(Optional.of(new Trainee()));
+        when(trainingRepository.save(any())).thenReturn(training);
+
+        doNothing().when(workloadFeignClient).modifyWorkload(any());
+
         Training createdTraining = trainingService.createTraining(training);
+
+        assertNotNull(createdTraining);
+    }
+
+    @Test
+    public void testCreateTraining_Unsuccessful() {
+        Training training = new Training();
+
+        when(trainerRepository.findById(any())).thenReturn(Optional.empty());
+        Training createdTraining = trainingService.createTraining(training);
+
         assertNull(createdTraining);
     }
 
     @Test
-    public void testCreateTraining_UserNotActive() {
+    public void testGetTraining() {
+        int trainingId = 1;
         Training training = new Training();
-        Trainer trainer = Trainer.builder()
-                .userId(User.builder()
-                        .isActive(false)
-                        .build())
-                .build();
-        training.setTrainerId(trainer);
 
-        when(trainerService.getTrainer(training.getTrainerId().getId())).thenReturn(trainer);
-        Training createdTraining = trainingService.createTraining(training);
-        assertNull(createdTraining);
+        when(trainingRepository.findById(any())).thenReturn(Optional.of(training));
+
+        Training retrievedTraining = trainingService.getTraining(trainingId);
+
+        assertNotNull(retrievedTraining);
     }
 
     @Test
-    public void testCreateTraining_TraineesAreNotNull() {
+    public void testDeleteTraining_TrainingExists() {
+        int trainingId = 1;
         Training training = new Training();
-        Trainer trainer = Trainer.builder()
-                .userId(User.builder()
-                        .isActive(false)
-                        .build())
-                .build();
-        training.setTrainerId(trainer);
-
-
-
-        List<Trainee> trainees = new ArrayList<>(
-                Collections.singletonList(
-                        Trainee.builder()
-                                .build()
-                )
-
-        );
-        training.setTraineeId(trainees);
-
-        when(trainerService.getTrainer(training.getTrainerId().getId())).thenReturn(trainer);
-
-        Training createdTraining = trainingService.createTraining(training);
-        assertNull(createdTraining);
-    }
-
-
-    @Test
-    public void testCreateTraining_AllServicesReturnValidData() {
-        Training training = new Training();
-        Trainer trainer = Trainer.builder().id(1).build();
-        List<Trainee> trainees = new ArrayList<>(
-                Collections.singletonList(
-                        Trainee.builder()
-                                .id(1)
-                                .build()));
-        TrainingType trainingType = TrainingType.builder().id(1).build();
+        training.setId(trainingId);
         User user = User.builder().id(1)
                 .isActive(true)
                 .build();
-        User user1 = User.builder()
-                .id(2)
-                .isActive(true)
-                .build();
-        trainees.get(0).setUserId(user);
-        trainer.setUserId(user1);
+        training.setTrainerId(Trainer.builder().userId(user).build());
 
+        when(trainingRepository.findById(trainingId)).thenReturn(Optional.of(training));
 
+        trainingService.deleteTraining(trainingId);
 
-        training.setTraineeId(trainees);
-        training.setTrainerId(trainer);
-        training.setTrainingType(trainingType);
-
-
-        when(trainingRepository.save(training)).thenReturn(training);
-        Training createdTraining = trainingService.createTraining(training);
-        assertEquals(training, createdTraining);
+        verify(trainingRepository, times(1)).findById(trainingId);
+        verify(trainingRepository, times(1)).deleteById(trainingId);
+        verify(workloadFeignClient, times(1)).modifyWorkload(any(TrainerWorkload.class));
     }
 
     @Test
-    public void testGetTraining_TrainingExists() {
+    public void testDeleteTraining_TrainingDoesNotExist() {
         int trainingId = 1;
-        Training expectedTraining = new Training();
-        expectedTraining.setId(trainingId);
-        when(trainingRepository.findById(trainingId)).thenReturn(expectedTraining);
-        Training retrievedTraining = trainingService.getTraining(trainingId);
-        assertEquals(expectedTraining, retrievedTraining);
-    }
 
-    @Test
-    public void testGetTraining_TrainingDoesNotExist() {
-        int trainingId = 1;
-        when(trainingRepository.findById(trainingId)).thenReturn(null);
-        Training retrievedTraining = trainingService.getTraining(trainingId);
-        assertNull(retrievedTraining);
+        when(trainingRepository.findById(trainingId)).thenReturn(Optional.empty());
+
+        trainingService.deleteTraining(trainingId);
+
+        verify(trainingRepository, times(0)).delete(any(Training.class));
+        verify(workloadFeignClient, times(0)).modifyWorkload(any(TrainerWorkload.class));
     }
 }

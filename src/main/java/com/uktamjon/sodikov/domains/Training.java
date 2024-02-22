@@ -29,7 +29,12 @@ public class Training {
     private String trainingName;
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private Trainer trainerId;
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "training_trainee",
+            joinColumns = @JoinColumn(name = "training_id"),
+            inverseJoinColumns = @JoinColumn(name = "trainee_id")
+    )
     private List<Trainee> traineeId;
     @NotNull
     private LocalDateTime trainingDate;
@@ -37,4 +42,5 @@ public class Training {
     private TrainingType trainingType;
     @NotNull
     private int trainingDuration;
+
 }

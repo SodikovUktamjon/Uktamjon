@@ -18,4 +18,5 @@ public interface TrainerRepository extends JpaRepository<Trainer, Integer> {
     List<Trainer> findAllByUserId_Active(boolean active);
 
 
+
 }

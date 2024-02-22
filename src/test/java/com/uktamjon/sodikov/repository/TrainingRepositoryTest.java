@@ -9,6 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -26,14 +28,12 @@ public class TrainingRepositoryTest {
         int trainingId = 123;
         Training expectedTraining = new Training();
 
-        when(trainingRepository.findById(trainingId)).thenReturn(expectedTraining);
-
+        when(trainingRepository.findById(trainingId)).thenReturn(Optional.of(expectedTraining));
         Training actualTraining = trainingService.getTraining(trainingId);
 
         assertEquals(expectedTraining, actualTraining);
         verify(trainingRepository, times(1)).findById(trainingId);
     }
 
-    // Add more tests as needed for other methods in the repository
 
 }

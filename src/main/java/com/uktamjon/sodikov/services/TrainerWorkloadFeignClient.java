@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "trainer-service", url = "http://localhost:8082")
 public interface TrainerWorkloadFeignClient {
 
-    @PostMapping("/create")
-    ResponseEntity<TrainerWorkload> createTrainer(@RequestBody TrainerWorkload trainer);
-
-    @DeleteMapping("/delete")
-    ResponseEntity<Void> deleteTrainer(int id);
+    @PostMapping("/modifyworkload")
+    ResponseEntity<Void> modifyWorkload(@RequestBody TrainerWorkload trainer);
 }

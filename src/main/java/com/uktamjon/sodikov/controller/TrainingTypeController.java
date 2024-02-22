@@ -35,4 +35,12 @@ public class TrainingTypeController {
         List<TrainingType> trainingTypes = trainingTypeService.getAllTrainingTypes();
         return new ResponseEntity<>(trainingTypes, HttpStatus.OK);
     }
+
+
+    @PostMapping("/create")
+    public ResponseEntity<TrainingType> createTrainingType(@RequestBody TrainingType trainingType) {
+        customMetricsService.recordCustomMetric(1);
+        TrainingType createdTrainingType = trainingTypeService.createTrainingType(trainingType);
+        return new ResponseEntity<>(createdTrainingType, HttpStatus.CREATED);
+    }
 }

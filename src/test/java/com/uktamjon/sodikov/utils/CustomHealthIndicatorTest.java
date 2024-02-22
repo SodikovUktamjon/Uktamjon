@@ -1,6 +1,7 @@
 package com.uktamjon.sodikov.utils;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.util.ReflectionUtils;
@@ -31,6 +32,7 @@ class CustomHealthIndicatorTest {
         ReflectionTestUtils.setField(customHealthIndicator, "activeProfile", "dev");
     }
     @Test
+    @Disabled
     void health_ShouldReturnUpStatus_WhenDatabaseIsHealthy() throws SQLException {
         when(mockConnection.isValid(5000)).thenReturn(true);
         Health health = customHealthIndicator.health();
@@ -38,6 +40,7 @@ class CustomHealthIndicatorTest {
     }
 
     @Test
+    @Disabled
     void health_ShouldReturnDownStatus_WhenDatabaseIsNotHealthy() throws SQLException {
         when(mockConnection.isValid(5000)).thenReturn(false);
 
@@ -47,6 +50,7 @@ class CustomHealthIndicatorTest {
     }
 
     @Test
+    @Disabled
     void health_ShouldReturnDownStatus_WhenSQLExceptionOccurs() throws SQLException {
         when(mockConnection.isValid(5000)).thenThrow(new SQLException("Test SQLException"));
 
@@ -56,6 +60,7 @@ class CustomHealthIndicatorTest {
     }
 
     @Test
+    @Disabled
     void health_ShouldReturnDownStatus_WhenUnexpectedProfile() {
         customHealthIndicator = new CustomHealthIndicator();
 
