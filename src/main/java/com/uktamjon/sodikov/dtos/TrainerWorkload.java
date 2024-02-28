@@ -4,6 +4,7 @@ import com.uktamjon.sodikov.enums.ActionType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TrainerWorkload {
+public class TrainerWorkload implements Serializable {
     private Integer id;
     private String firstName;
     private String lastName;

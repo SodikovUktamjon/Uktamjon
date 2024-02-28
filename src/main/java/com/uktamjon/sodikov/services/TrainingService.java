@@ -9,6 +9,7 @@ import com.uktamjon.sodikov.repository.TrainingRepository;
 import com.uktamjon.sodikov.repository.TrainingTypeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class TrainingService {
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
     private final TrainingTypeRepository trainingTypeRepository;
+    private final JmsTemplate jmsTemplate;
 
     public Training createTraining(Training training) {
         Trainer trainer = trainerRepository.findById(training.getTrainerId().getId()).orElse(null);
@@ -59,6 +61,9 @@ public class TrainingService {
                         .duration(createdTraining.getTrainingDuration())
                         .actionType(ActionType.ADD)
                         .build());
+
+        sendTrainerWorkloadMessage(createdTraining, ActionType.ADD);
+
         return createdTraining;
 
     }
@@ -86,9 +91,28 @@ public class TrainingService {
                             .actionType(ActionType.DELETE)
                             .build()
             );
+
+            sendTrainerWorkloadMessage(training.get(), ActionType.DELETE);
+
             trainingRepository.deleteById(trainingId);
         }
 
 
+    }
+
+    private void sendTrainerWorkloadMessage(Training training, ActionType actionType) {
+        User user = training.getTrainerId().getUserId();
+        TrainerWorkload trainerWorkload = TrainerWorkload.builder()
+                .id(training.getTrainerId().getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .username(user.getUsername())
+                .isActive(user.isActive())
+                .startDate(training.getTrainingDate())
+                .duration(training.getTrainingDuration())
+                .actionType(actionType)
+                .build();
+
+        jmsTemplate.send("my-active-queue", session -> session.createObjectMessage(trainerWorkload));
     }
 }

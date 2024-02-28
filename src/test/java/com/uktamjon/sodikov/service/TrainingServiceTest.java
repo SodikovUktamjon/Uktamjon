@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jms.core.JmsTemplate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +42,9 @@ public class TrainingServiceTest {
 
     @InjectMocks
     private TrainingService trainingService;
+
+    @Mock
+    private JmsTemplate jmsTemplate;
     @Mock
     private TrainerWorkloadFeignClient workloadFeignClient;
     @BeforeEach
@@ -50,7 +54,7 @@ public class TrainingServiceTest {
         trainerRepository = mock(TrainerRepository.class);
         trainingTypeRepository = mock(TrainingTypeRepository.class);
         traineeRepository = mock(TraineeRepository.class);
-        trainingService = new TrainingService(trainingRepository,workloadFeignClient,traineeRepository,trainerRepository,trainingTypeRepository);
+        trainingService = new TrainingService(trainingRepository,workloadFeignClient,traineeRepository,trainerRepository,trainingTypeRepository, jmsTemplate);
     }
 
 
