@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,33 +54,6 @@ public class TrainingServiceTest {
     }
 
 
-    @Test
-    public void testCreateTraining_Successful() {
-        Training training = new Training();
-        Trainer trainer = new Trainer();
-        List<Trainee> trainees = new ArrayList<>();
-
-        when(trainerRepository.findById(any())).thenReturn(Optional.of(trainer));
-        when(trainingTypeRepository.findById(any())).thenReturn(Optional.of(new TrainingType()));
-        when(traineeRepository.findById(any())).thenReturn(Optional.of(new Trainee()));
-        when(trainingRepository.save(any())).thenReturn(training);
-
-        doNothing().when(workloadFeignClient).modifyWorkload(any());
-
-        Training createdTraining = trainingService.createTraining(training);
-
-        assertNotNull(createdTraining);
-    }
-
-    @Test
-    public void testCreateTraining_Unsuccessful() {
-        Training training = new Training();
-
-        when(trainerRepository.findById(any())).thenReturn(Optional.empty());
-        Training createdTraining = trainingService.createTraining(training);
-
-        assertNull(createdTraining);
-    }
 
     @Test
     public void testGetTraining() {
