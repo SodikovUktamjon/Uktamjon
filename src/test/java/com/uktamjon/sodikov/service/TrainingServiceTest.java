@@ -2,11 +2,13 @@ package com.uktamjon.sodikov.service;
 
 import com.uktamjon.sodikov.domains.*;
 import com.uktamjon.sodikov.dtos.TrainerWorkload;
+import com.uktamjon.sodikov.enums.ActionType;
 import com.uktamjon.sodikov.repository.TraineeRepository;
 import com.uktamjon.sodikov.repository.TrainerRepository;
 import com.uktamjon.sodikov.repository.TrainingRepository;
 import com.uktamjon.sodikov.repository.TrainingTypeRepository;
 import com.uktamjon.sodikov.services.*;
+import jakarta.jms.JMSException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,6 +17,8 @@ import org.mockito.Mockito;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsTemplate;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -49,6 +53,7 @@ public class TrainingServiceTest {
     private TrainerWorkloadFeignClient workloadFeignClient;
     @BeforeEach
     void setUp() {
+        jmsTemplate= mock(JmsTemplate.class);
         trainingRepository = mock(TrainingRepository.class);
         workloadFeignClient = mock(TrainerWorkloadFeignClient.class);
         trainerRepository = mock(TrainerRepository.class);
@@ -101,4 +106,6 @@ public class TrainingServiceTest {
         verify(trainingRepository, times(0)).delete(any(Training.class));
         verify(workloadFeignClient, times(0)).modifyWorkload(any(TrainerWorkload.class));
     }
+
+
 }

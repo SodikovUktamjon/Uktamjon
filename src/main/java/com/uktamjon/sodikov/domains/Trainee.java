@@ -25,7 +25,6 @@
         private String address;
         @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
         private User userId;
-
         @ManyToMany(mappedBy = "traineeId", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-        private List<Training> trainings = new ArrayList<>();
+        private List<Training> trainings;
     }
