@@ -154,6 +154,13 @@
             <version>3.2.3</version>
         </dependency>
 
+            <!-- Other dependencies -->
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <scope>test</scope>
+           </dependency>
+
 
     </dependencies>
 
