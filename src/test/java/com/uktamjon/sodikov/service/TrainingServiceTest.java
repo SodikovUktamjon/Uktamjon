@@ -54,7 +54,6 @@ public class TrainingServiceTest {
     void setUp() {
         jmsTemplate= mock(JmsTemplate.class);
         trainingRepository = mock(TrainingRepository.class);
-        workloadFeignClient = mock(TrainerWorkloadFeignClient.class);
         trainerRepository = mock(TrainerRepository.class);
         trainingTypeRepository = mock(TrainingTypeRepository.class);
         traineeRepository = mock(TraineeRepository.class);
@@ -91,7 +90,6 @@ public class TrainingServiceTest {
 
         verify(trainingRepository, times(1)).findById(trainingId);
         verify(trainingRepository, times(1)).deleteById(trainingId);
-        verify(workloadFeignClient, times(1)).modifyWorkload(any(TrainerWorkload.class));
     }
 
     @Test
@@ -103,7 +101,6 @@ public class TrainingServiceTest {
         trainingService.deleteTraining(trainingId);
 
         verify(trainingRepository, times(0)).delete(any(Training.class));
-        verify(workloadFeignClient, times(0)).modifyWorkload(any(TrainerWorkload.class));
     }
 
 
