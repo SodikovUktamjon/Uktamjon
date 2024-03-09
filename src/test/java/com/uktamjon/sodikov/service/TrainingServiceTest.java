@@ -49,8 +49,7 @@ public class TrainingServiceTest {
 
     @Mock
     private JmsTemplate jmsTemplate;
-    @Mock
-    private TrainerWorkloadFeignClient workloadFeignClient;
+
     @BeforeEach
     void setUp() {
         jmsTemplate= mock(JmsTemplate.class);
@@ -59,7 +58,7 @@ public class TrainingServiceTest {
         trainerRepository = mock(TrainerRepository.class);
         trainingTypeRepository = mock(TrainingTypeRepository.class);
         traineeRepository = mock(TraineeRepository.class);
-        trainingService = new TrainingService(trainingRepository,workloadFeignClient,traineeRepository,trainerRepository,trainingTypeRepository, jmsTemplate);
+        trainingService = new TrainingService(trainingRepository,traineeRepository,trainerRepository,trainingTypeRepository, jmsTemplate);
     }
 
 

@@ -23,7 +23,6 @@ import java.util.Optional;
 public class TrainingService {
 
     private final TrainingRepository trainingRepository;
-    private final TrainerWorkloadFeignClient trainerWorkloadFeignClient;
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
     private final TrainingTypeRepository trainingTypeRepository;
@@ -50,17 +49,6 @@ public class TrainingService {
         Training createdTraining = trainingRepository.save(training);
         log.info("Training created: {}", training);
         User user = createdTraining.getTrainerId().getUserId();
-        trainerWorkloadFeignClient.modifyWorkload(
-                TrainerWorkload.builder()
-                        .id(createdTraining.getTrainerId().getId())
-                        .firstName(user.getFirstName())
-                        .lastName(user.getLastName())
-                        .username(user.getUsername())
-                        .isActive(user.isActive())
-                        .startDate(createdTraining.getTrainingDate())
-                        .duration(createdTraining.getTrainingDuration())
-                        .actionType(ActionType.ADD)
-                        .build());
 
         sendTrainerWorkloadMessage(createdTraining, ActionType.ADD);
 
@@ -79,19 +67,6 @@ public class TrainingService {
         Optional<Training> training = trainingRepository.findById(trainingId);
         if (training.isPresent()) {
             User user = training.get().getTrainerId().getUserId();
-            trainerWorkloadFeignClient.modifyWorkload(
-                    TrainerWorkload.builder()
-                            .id(training.get().getTrainerId().getId())
-                            .firstName(user.getFirstName())
-                            .lastName(user.getLastName())
-                            .username(user.getUsername())
-                            .isActive(user.isActive())
-                            .startDate(training.get().getTrainingDate())
-                            .duration(training.get().getTrainingDuration())
-                            .actionType(ActionType.DELETE)
-                            .build()
-            );
-
             sendTrainerWorkloadMessage(training.get(), ActionType.DELETE);
 
             trainingRepository.deleteById(trainingId);
