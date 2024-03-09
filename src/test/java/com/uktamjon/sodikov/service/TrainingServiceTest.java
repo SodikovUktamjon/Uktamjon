@@ -1,32 +1,22 @@
 package com.uktamjon.sodikov.service;
 
-import com.uktamjon.sodikov.domains.*;
-import com.uktamjon.sodikov.dtos.TrainerWorkload;
-import com.uktamjon.sodikov.enums.ActionType;
+import com.uktamjon.sodikov.domains.Trainer;
+import com.uktamjon.sodikov.domains.Training;
+import com.uktamjon.sodikov.domains.User;
 import com.uktamjon.sodikov.repository.TraineeRepository;
 import com.uktamjon.sodikov.repository.TrainerRepository;
 import com.uktamjon.sodikov.repository.TrainingRepository;
 import com.uktamjon.sodikov.repository.TrainingTypeRepository;
-import com.uktamjon.sodikov.services.*;
-import jakarta.jms.JMSException;
+import com.uktamjon.sodikov.services.TrainingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsTemplate;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 public class TrainingServiceTest {
