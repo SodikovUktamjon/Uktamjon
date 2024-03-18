@@ -12,8 +12,7 @@ import java.sql.SQLException;
 @Component
 @Slf4j
 public class CustomHealthIndicator implements HealthIndicator {
-
-    @Value("${spring.profiles.active}")
+    @Value("spring.profiles.active")
     private String activeProfile;
 
     @Override
