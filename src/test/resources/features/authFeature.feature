@@ -1,7 +1,7 @@
 Feature: Login Feature
 
   Scenario: Successful Login
-    Given a user with username "testuser" and password "Test@123"
+    Given a user with username "testuser" and password "Test@123Test"
     When the user logs in
     Then a valid token is returned
 
