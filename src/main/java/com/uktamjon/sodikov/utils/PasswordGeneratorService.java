@@ -19,7 +19,7 @@ public class PasswordGeneratorService {
 
     private static final String PASSWORD_ALLOW = CHAR_LOWER + CHAR_UPPER + NUMBER + SPECIAL_CHARS;
 
-    public String generateRandomPassword(int length) {
+    public  String generateRandomPassword(int length) {
         if (length < 1) {
             throw new IllegalArgumentException("Length must be at least 1");
         }
@@ -35,7 +35,7 @@ public class PasswordGeneratorService {
     }
 
 
-    public String encryptPassword(String password) {
+    public  String encryptPassword(String password) {
         String encryptedPassword = null;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -55,10 +55,11 @@ public class PasswordGeneratorService {
         return encryptedPassword;
     }
 
-    public boolean checkPassword(String enteredPassword, String storedEncryptedPassword) {
+    public  boolean checkPassword(String enteredPassword, String storedEncryptedPassword) {
+        enteredPassword=encryptPassword(enteredPassword);
         return enteredPassword.equals(storedEncryptedPassword);
     }
 
 
-    
+
 }

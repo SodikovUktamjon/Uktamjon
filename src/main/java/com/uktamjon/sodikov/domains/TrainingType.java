@@ -16,7 +16,7 @@ import lombok.Builder;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class TrainingType {
+public class    TrainingType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

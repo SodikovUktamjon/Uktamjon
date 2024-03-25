@@ -76,7 +76,7 @@ public class UserService {
         User user = getUserById(id);
         if (checkingUserAndPasswordMatching(password, user)) return false;
         user.setPassword(passwordGenerator.encryptPassword(password));
-        updateUser(user);
+        userRepository.save(user);
         log.info("Password changed for user with id {}", id);
         return true;
     }
