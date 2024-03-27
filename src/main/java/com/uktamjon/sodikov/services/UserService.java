@@ -3,6 +3,7 @@ package com.uktamjon.sodikov.services;
 import com.uktamjon.sodikov.domains.User;
 import com.uktamjon.sodikov.repository.UserRepository;
 import com.uktamjon.sodikov.utils.PasswordGeneratorService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordGeneratorService passwordGenerator;
-
 
     public User createUser(User user) {
         log.info("Creating user {}", user);
@@ -133,7 +133,7 @@ public class UserService {
         userRepository.deleteByUsername(username);
     }
 
-    public  String generateUserName(String firstName, String lastName) {
+    public String generateUserName(String firstName, String lastName) {
         String baseUsername = firstName + "." + lastName;
 
         boolean usernameExists = userRepository.existsByUsername(baseUsername);
@@ -143,6 +143,7 @@ public class UserService {
         log.info("Generated username: {}", generatedUsername);
         return generatedUsername;
     }
+
     private static Long userNameSuffix = 0L;
 
     public static Long getUserNameSuffix() {

@@ -4,9 +4,9 @@ import com.uktamjon.sodikov.domains.Trainee;
 import com.uktamjon.sodikov.domains.User;
 import com.uktamjon.sodikov.dtos.CreateResponse;
 import com.uktamjon.sodikov.repository.TraineeRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class TraineeService {
     private final UserService userService;
     private final TraineeRepository traineeRepository;
 
-
+    @Transactional
     public CreateResponse createTrainee(Trainee trainee) {
         if (userService.getUserByUsername(trainee.getUserId().getUsername()) != null) {
             log.info("User with this username already exists");
@@ -29,11 +29,10 @@ public class TraineeService {
         User user1 = userService.createUser(trainee.getUserId());
         trainee.setUserId(user1);
         log.info("Trainee created: {}", trainee);
-        Trainee save = traineeRepository.save(trainee);
-        User userById = userService.getUserById(save.getUserId().getId());
+        traineeRepository.save(trainee);
         return CreateResponse.builder()
-                .username(userById.getUsername())
-                .password(userById.getPassword())
+                .username(user1.getUsername())
+                .password(user1.getPassword())
                 .build();
     }
 
@@ -48,7 +47,7 @@ public class TraineeService {
     }
 
     public void deleteTrainee(int traineeId) {
-        Trainee traineeNotFound = traineeRepository.findById(traineeId).orElseThrow(()->new NullPointerException("User Not Found"));
+        Trainee traineeNotFound = traineeRepository.findById(traineeId).orElseThrow(() -> new NullPointerException("User Not Found"));
         userService.deleteUserById(Objects.requireNonNull(traineeNotFound).getUserId().getId());
         traineeRepository.deleteById(traineeId);
         log.info("Trainee deleted: {}", traineeId);
@@ -59,20 +58,22 @@ public class TraineeService {
         return traineeRepository.findById(traineeId).orElse(null);
     }
 
-    public Trainee getTrainee(String username){
+    public Trainee getTrainee(String username) {
         log.info("Getting trainee by username {}", username);
         User user = userService.getUserByUsername(username);
         return traineeRepository.findByUserId(user.getId());
     }
 
-    public boolean changePassword(String password, String username){
+    public boolean changePassword(String password, String username) {
         log.info("Changing password for user {}", username);
         return userService.changePassword(password, username);
     }
-    public boolean changePassword(String password, int id){
+
+    public boolean changePassword(String password, int id) {
         log.info("Changing password for user {}", id);
         return userService.changePassword(password, id);
     }
+
     public boolean activateAndDeactivate(String username) {
         log.info("Changing status for user {}", username);
         return userService.activateAndDeactivate(username);
@@ -83,11 +84,10 @@ public class TraineeService {
         return userService.activateAndDeactivate(id);
     }
 
-    public List<Trainee> listAllTrainees(){
+    public List<Trainee> listAllTrainees() {
         log.info("Getting all trainees");
         return traineeRepository.findAll();
     }
-
 
 
 }

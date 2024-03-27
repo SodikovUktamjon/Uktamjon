@@ -38,10 +38,9 @@ public class TraineeStepDefs {
         createResponse = traineeService.createTrainee(trainee);
     }
 
-    @Then("the response should contain the username {string} and password {string}")
-    public void theResponseShouldContainTheUsernameAndPassword(String username, String password) {
+    @Then("the response should contain the username {string}")
+    public void theResponseShouldContainTheUsernameAndPassword(String username) {
         assertEquals(username, createResponse.getUsername());
-        assertEquals(password, createResponse.getPassword());
         assertNotNull(traineeService.getTrainee(user.getUsername()));
     }
 

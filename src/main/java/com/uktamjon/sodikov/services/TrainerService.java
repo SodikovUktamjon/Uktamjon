@@ -4,6 +4,7 @@ import com.uktamjon.sodikov.domains.Trainer;
 import com.uktamjon.sodikov.domains.User;
 import com.uktamjon.sodikov.dtos.CreateResponse;
 import com.uktamjon.sodikov.repository.TrainerRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class TrainerService {
     private final TrainingTypeService trainingTypeService;
     private final UserService userService;
 
-
+    @Transactional
     public CreateResponse createTrainer(Trainer trainer) {
         if (trainingTypeService.getTrainingTypeById(trainer.getSpecialization()) != null) {
             log.error("Trainer not created: {}", trainer);
