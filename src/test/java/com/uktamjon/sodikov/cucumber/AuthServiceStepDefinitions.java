@@ -5,6 +5,7 @@ import com.uktamjon.sodikov.dtos.CreateAuthUserDTO;
 import com.uktamjon.sodikov.dtos.GetTokenDTO;
 import com.uktamjon.sodikov.services.AuthService;
 import com.uktamjon.sodikov.services.UserService;
+import com.uktamjon.sodikov.utils.BruteForceProtectionService;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -21,20 +22,24 @@ public class AuthServiceStepDefinitions {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private BruteForceProtectionService bruteForceProtectionService;
 
-    @Given("a user with username {string} and password {string}")
-    public void aUserWithUsernameAndPassword(String arg0, String arg1) {
+
+    @Given("a user with username {string} and password {string} and confirm password {string}")
+    public void aUserWithUsernameAndPassword(String arg0, String arg1, String arg2 ) {
         user=new User();
-        user.setFirstName("John");
-        user.setLastName("Doe");
+        user.setFirstName("Uktam");
+        user.setLastName("Sodikov");
         userService.createUser(user);
         createAuthUserDTO = new CreateAuthUserDTO();
         createAuthUserDTO.setUsername(arg0);
         createAuthUserDTO.setPassword(arg1);
+        createAuthUserDTO.setConfirmPassword(arg2);
         user.setPassword(arg1);
     }
 
-    @When("the user logs in")
+    @When("the user logs in correctly")
     public void theUserLogsIn() {
         userService.updateUser(user);
         getTokenDTO = authService.login(createAuthUserDTO);
@@ -43,36 +48,66 @@ public class AuthServiceStepDefinitions {
     @Then("a valid token is returned")
     public void aValidTokenIsReturned() {
         Assert.assertNotNull(getTokenDTO);
-        Assert.assertNotNull(getTokenDTO.getToken());
+        Assert.assertNotEquals(getTokenDTO.getToken(),"fallback-token");
     }
 
 
-//    @Given("a user with username {string} and incorrect password {string}")
-//    public void aUserWithUsernameAndIncorrectPassword(String arg0, String arg1) {
-//        createAuthUserDTO = new CreateAuthUserDTO();
-//        createAuthUserDTO.setUsername(arg0);
-//        createAuthUserDTO.setPassword(arg1);
-//    }
-//    @And("the user is blocked")
-//    public void theUserIsBlocked() {
-//
-//    }
+    @Given("a user with username {string} and incorrect password {string}")
+    public void aUserWithUsernameAndIncorrectPassword(String arg0, String arg1) {
+        createAuthUserDTO = new CreateAuthUserDTO();
+        createAuthUserDTO.setUsername(arg0);
+        createAuthUserDTO.setPassword(arg1);
+    }
 
-//    @When("the user logs in")
-//    public void theUserLogsInBlocked() {
-//        getTokenDTO = authService.login(createAuthUserDTO);
-//    }
-//
-//
-//    @Then("no token is returned")
-//    public void noTokenIsReturned() {
-//        Assert.assertNull(getTokenDTO);
-//    }
-//
-//
-//    @Given("a non-existing user with username {string} and password {string}")
-//    public void aNonExistingUserWithUsernameAndPassword(String arg0, String arg1) {
-//    }
+    @When("the user logs in incorrectly")
+    public void theUserLogsInIncorrectly() {
+        getTokenDTO = authService.login(createAuthUserDTO);
+    }
+
+    @Then("no token is returned")
+    public void noTokenIsReturned() {
+         Assert.assertEquals(getTokenDTO.getToken(), "fallback-token");
+    }
+
+    @Given("a user with username {string} and password {string}")
+    public void aUserWithUsernameAndUserBlocked(String arg0, String arg1) {
+        createAuthUserDTO = new CreateAuthUserDTO();
+        createAuthUserDTO.setUsername(arg0);
+        createAuthUserDTO.setPassword(arg1);
+    }
+    @And("the user is blocked")
+    public void theUserIsBlocked() {
+        for (int i =0;i<3;i++) bruteForceProtectionService.recordFailedLogin(createAuthUserDTO.getUsername());
+    }
+
+    @When("the user logs in blocked")
+    public void theUserLogsInBlocked() {
+        getTokenDTO = authService.login(createAuthUserDTO);
+    }
+
+    @Then("null token is returned")
+    public void nullIsReturned() {
+        Assert.assertNull(getTokenDTO);
+    }
+
+
+
+
+    @Given("a non-existing user with username {string} and password {string}")
+    public void aNonExistingUserWithUsernameAndPassword(String arg0, String arg1) {
+        createAuthUserDTO = new CreateAuthUserDTO();
+        createAuthUserDTO.setUsername(arg0);
+        createAuthUserDTO.setPassword(arg1);
+    }
+    @When("the user logs in non-existed")
+    public void theUserLogsInNonExisted() {
+        getTokenDTO = authService.login(createAuthUserDTO);
+    }
+    @Then("fallback-token is returned")
+    public void fallbackTokenIsReturned() {
+        Assert.assertEquals(getTokenDTO.getToken(), "fallback-token");
+    }
+
 
 
 }

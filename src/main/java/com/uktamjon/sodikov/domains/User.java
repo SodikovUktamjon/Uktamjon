@@ -18,7 +18,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(unique = true)
-    @NotNull
     private String username;
     @NotNull
     private String password;

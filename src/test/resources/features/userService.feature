@@ -24,7 +24,21 @@ Feature: User Service Feature
     When the user's password is updated to "P@ssw0rd"
     Then the user's password should be updated in the database
 
+
+  Scenario: Activating and deactivating a user
+    Given a user with ID 1 exists while activating
+    When the user with ID 1 is activated
+    Then the user with ID 1 should be active in database
+
   Scenario: Deleting a user
     Given a user with ID 1 exists
     When the user with ID 1 is deleted
     Then the user with ID 1 should no longer exist in the database
+
+
+
+  Scenario: Deleting a user with username
+    When the user with username "Uktam.Sodikov" is deleted
+    Then the user with username "Uktam.Sodikov" should no longer exist in the database
+
+

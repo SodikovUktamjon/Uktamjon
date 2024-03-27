@@ -134,4 +134,37 @@ public class UserServiceStepDefinitions {
         assertEquals(user.getFirstName(), updatedUser.getFirstName());
         assertEquals(user.getRole(), updatedUser.getRole());
     }
+
+
+
+
+    @Given("a user with ID {int} exists while activating")
+    public void createUserBeforeActivating(int userId) {
+        user = new User();
+        user.setFirstName("John");
+        user.setLastName("Doe");
+    }
+
+    @When("the user with ID {int} is activated")
+    public void userActivated(int userId) {
+        userService.activateAndDeactivate(userId);
+    }
+
+    @Then("the user with ID {int} should be active in database")
+    public void userActivatedInDatabase(int userId) {
+        assertTrue(userService.getUserById(userId).isActive());
+    }
+
+
+    @When("the user with username {string} is deleted")
+    public void deleteUserWithUsername(String userId) {
+        userService.deleteByUsername(userId);
+    }
+
+    @Then("the user with username {string} should no longer exist in the database")
+    public void verifyUserDeleted(String username) {
+        assertNull(userService.getUserByUsername(username));
+        assertEquals(userService.getAllUsers().size(),0);
+    }
+
 }

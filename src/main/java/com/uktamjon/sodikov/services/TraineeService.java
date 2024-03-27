@@ -30,9 +30,10 @@ public class TraineeService {
         trainee.setUserId(user1);
         log.info("Trainee created: {}", trainee);
         Trainee save = traineeRepository.save(trainee);
+        User userById = userService.getUserById(save.getUserId().getId());
         return CreateResponse.builder()
-                .username(save.getUserId().getUsername())
-                .password(save.getUserId().getPassword())
+                .username(userById.getUsername())
+                .password(userById.getPassword())
                 .build();
     }
 

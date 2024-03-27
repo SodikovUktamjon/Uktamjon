@@ -32,10 +32,11 @@ public class AuthService {
         if(bruteForceProtectionService.isUserBlocked(dto.getUsername())) {
             return null;
         }
+        log.info("Authentication user");
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         dto.getUsername(),
-                        dto.getPassword()
+                       dto.getPassword()
                 )
         );
         User user = authUserRepository.findByUsername(dto.getUsername());

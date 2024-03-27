@@ -1,6 +1,8 @@
 package com.uktamjon.sodikov.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
@@ -16,10 +18,15 @@ public class PasswordGeneratorService {
     private static final String NUMBER = "0123456789";
     private static final String SPECIAL_CHARS = "!@#$%&*()_+-=[]|,./?><";
 
-
     private static final String PASSWORD_ALLOW = CHAR_LOWER + CHAR_UPPER + NUMBER + SPECIAL_CHARS;
 
-    public  String generateRandomPassword(int length) {
+    private final PasswordEncoder passwordEncoder;
+
+    public PasswordGeneratorService() {
+        this.passwordEncoder = new BCryptPasswordEncoder();
+    }
+
+    public String generateRandomPassword(int length) {
         if (length < 1) {
             throw new IllegalArgumentException("Length must be at least 1");
         }
@@ -34,32 +41,11 @@ public class PasswordGeneratorService {
         return password.toString();
     }
 
-
-    public  String encryptPassword(String password) {
-        String encryptedPassword = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-
-            md.update(password.getBytes());
-
-            byte[] bytes = md.digest();
-
-            StringBuilder sb = new StringBuilder();
-            for (byte aByte : bytes) {
-                sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
-            }
-            encryptedPassword = sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return encryptedPassword;
+    public String encryptPassword(String password) {
+        return passwordEncoder.encode(password);
     }
 
-    public  boolean checkPassword(String enteredPassword, String storedEncryptedPassword) {
-        enteredPassword=encryptPassword(enteredPassword);
-        return enteredPassword.equals(storedEncryptedPassword);
+    public boolean checkPassword(String enteredPassword, String storedEncryptedPassword) {
+        return passwordEncoder.matches(enteredPassword, storedEncryptedPassword);
     }
-
-
-
 }
