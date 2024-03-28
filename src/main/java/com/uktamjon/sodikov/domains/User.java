@@ -19,7 +19,6 @@ public class User {
     private int id;
     @Column(unique = true)
     private String username;
-    @NotNull
     private String password;
     @NotNull
     private String firstName;

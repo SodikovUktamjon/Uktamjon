@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,6 +67,12 @@ public class TrainerRepositoryTest {
         verify(trainerRepository, times(1)).findAllByUserId_Active(active);
     }
 
-    // Add more tests as needed for other methods in the repository
+    @Test
+    public void testDeleteTrainee_TraineeDoesNotExist() {
+        int traineeId = 1;
+        when(trainerRepository.findById(traineeId)).thenReturn(null);
+        assertThrows(NullPointerException.class,()->trainerService.deleteTrainee(traineeId));
+        verify(trainerRepository, times(1)).findById(traineeId);
+    }
 
 }

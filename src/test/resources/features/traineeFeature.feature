@@ -6,11 +6,14 @@ Feature: Trainee Service Features
     Then the response should contain the username "Abraham.Lincoln"
 
   Scenario: Update Trainee
-    Given an existing trainee with username "testuser" and password "password"
-    When I update the trainee
+    When I update the trainee with username "Abraham.Lincoln"
     Then the trainee information should be updated successfully
 
+  Scenario: Getting all trainees
+    When all trainees are requested
+    Then all trainees should be returned
+
+
   Scenario: Delete Trainee
-    Given an existing trainee with username "testuser" and password "password"
-    When I delete the trainee
-    Then the trainee should be deleted successfully
+    When I delete the trainee "Abraham.Lincoln"
+    Then the trainee should be deleted successfully "Abraham.Lincoln"

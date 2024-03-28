@@ -87,4 +87,6 @@ public class TrainingTypeServiceTest {
         List<TrainingType> retrievedTrainingTypes = trainingTypeService.getAllTrainingTypes();
         assertEquals(expectedTrainingTypes, retrievedTrainingTypes);
     }
+
+
 }

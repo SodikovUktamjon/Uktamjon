@@ -40,10 +40,11 @@ public class UserService {
         log.info("Getting user by id {}", userId);
         return userRepository.findById(userId).orElse(null);
     }
-
+@Transactional
     public void updateUser(User user) {
         log.info("Updating user {}", user);
         User userById = getUserById(user.getId());
+        if(userById==null) userById=getUserByUsername(user.getUsername());
 
         if (user.getPassword() != null) {
             user.setPassword(passwordGenerator.encryptPassword(user.getPassword()));
@@ -52,7 +53,7 @@ public class UserService {
         userRepository.save(user);
         log.info("User updated {}", user);
     }
-
+     @Transactional
     public void deleteUserById(int userId) {
         userRepository.deleteById(userId);
         log.info("User deleted {}", userId);

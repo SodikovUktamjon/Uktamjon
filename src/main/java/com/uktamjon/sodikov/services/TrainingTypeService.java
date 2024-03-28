@@ -44,5 +44,8 @@ public class TrainingTypeService {
         log.info("Getting all training types");
         return trainingTypeRepository.findAll();
     }
-
+    public TrainingType getTrainingTypeByTrainingName(String trainingTypeId) {
+        log.info("Training type id: {}", trainingTypeId);
+        return trainingTypeRepository.findByTrainingTypeName(trainingTypeId);
+    }
 }

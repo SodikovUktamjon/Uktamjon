@@ -1,5 +1,6 @@
 package com.uktamjon.sodikov.services;
 
+import com.uktamjon.sodikov.domains.Trainee;
 import com.uktamjon.sodikov.domains.Trainer;
 import com.uktamjon.sodikov.domains.User;
 import com.uktamjon.sodikov.dtos.CreateResponse;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -39,7 +41,7 @@ public class TrainerService {
                 .password(save.getUserId().getPassword())
                 .build();
     }
-
+   @Transactional
     public boolean updateTrainer(Trainer trainer) {
         if (trainingTypeService.getTrainingTypeById(trainer.getSpecialization()) != null) {
             log.error("Trainer not updated: {}", trainer);
@@ -54,13 +56,20 @@ public class TrainerService {
         }
         return false;
     }
+    @Transactional
+    public void deleteTrainee(int traineeId) {
+        Trainer traineeNotFound = trainerRepository.findById(traineeId).orElseThrow(() -> new NullPointerException("User Not Found"));
+        userService.deleteUserById(Objects.requireNonNull(traineeNotFound).getUserId().getId());
+        trainerRepository.deleteById(traineeId);
+        log.info("Trainee deleted: {}", traineeId);
+    }
 
-
+   @Transactional
     public Trainer getTrainer(int trainerId) {
         log.info("Getting trainer by id {}", trainerId);
         return trainerRepository.findByUserId(trainerId);
     }
-
+   @Transactional
     public Trainer getTrainer(String username) {
         log.info("Getting trainer by username {}", username);
         User user = userService.getUserByUsername(username);

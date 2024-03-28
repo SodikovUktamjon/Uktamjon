@@ -7,6 +7,7 @@ import com.uktamjon.sodikov.repository.TraineeRepository;
 import com.uktamjon.sodikov.repository.TrainerRepository;
 import com.uktamjon.sodikov.repository.TrainingRepository;
 import com.uktamjon.sodikov.repository.TrainingTypeRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.core.JmsTemplate;
@@ -28,6 +29,7 @@ public class TrainingService {
     private final TrainingTypeRepository trainingTypeRepository;
     private final JmsTemplate jmsTemplate;
 
+    @Transactional
     public Training createTraining(Training training) {
         Trainer trainer = trainerRepository.findById(training.getTrainerId().getId()).orElse(null);
         TrainingType trainingType = trainingTypeRepository.findById(training.getTrainingType().getId()).orElse(null);
@@ -48,7 +50,6 @@ public class TrainingService {
         training.setTrainingType(trainingType);
         Training createdTraining = trainingRepository.save(training);
         log.info("Training created: {}", training);
-        User user = createdTraining.getTrainerId().getUserId();
 
         sendTrainerWorkloadMessage(createdTraining, ActionType.ADD);
 
@@ -56,12 +57,13 @@ public class TrainingService {
 
     }
 
+    @Transactional
     public Training getTraining(int trainingId) {
         log.info("Training id: {}", trainingId);
         return trainingRepository.findById(trainingId).orElse(null);
     }
 
-
+    @Transactional
     public void deleteTraining(int trainingId) {
         log.info("Training id: {}", trainingId);
         Optional<Training> training = trainingRepository.findById(trainingId);

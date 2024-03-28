@@ -36,6 +36,7 @@ public class TraineeService {
                 .build();
     }
 
+    @Transactional
     public Trainee updateTrainee(Trainee trainee) {
         if (userService.getUserById(trainee.getUserId().getId()) != null && traineeRepository.existsById(trainee.getId())) {
             userService.updateUser(trainee.getUserId());
@@ -45,7 +46,7 @@ public class TraineeService {
         log.error("Trainee not updated: {}", trainee);
         return null;
     }
-
+    @Transactional
     public void deleteTrainee(int traineeId) {
         Trainee traineeNotFound = traineeRepository.findById(traineeId).orElseThrow(() -> new NullPointerException("User Not Found"));
         userService.deleteUserById(Objects.requireNonNull(traineeNotFound).getUserId().getId());
@@ -58,10 +59,11 @@ public class TraineeService {
         return traineeRepository.findById(traineeId).orElse(null);
     }
 
+    @Transactional
     public Trainee getTrainee(String username) {
         log.info("Getting trainee by username {}", username);
         User user = userService.getUserByUsername(username);
-        return traineeRepository.findByUserId(user.getId());
+        return traineeRepository.findByUserId(user);
     }
 
     public boolean changePassword(String password, String username) {

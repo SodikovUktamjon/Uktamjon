@@ -10,6 +10,7 @@ public interface TrainingTypeRepository extends JpaRepository<TrainingType, Inte
     @Query("select (count(t) > 0) from TrainingType t where t.trainingTypeName = ?1")
     boolean existsByTrainingTypeName(String name);
 
+    TrainingType findByTrainingTypeName(String name);
 
     
 }
