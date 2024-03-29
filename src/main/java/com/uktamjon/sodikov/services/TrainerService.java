@@ -1,6 +1,5 @@
 package com.uktamjon.sodikov.services;
 
-import com.uktamjon.sodikov.domains.Trainee;
 import com.uktamjon.sodikov.domains.Trainer;
 import com.uktamjon.sodikov.domains.User;
 import com.uktamjon.sodikov.dtos.CreateResponse;
@@ -67,13 +66,13 @@ public class TrainerService {
    @Transactional
     public Trainer getTrainer(int trainerId) {
         log.info("Getting trainer by id {}", trainerId);
-        return trainerRepository.findByUserId(trainerId);
+        return trainerRepository.findByIdOver(trainerId);
     }
    @Transactional
     public Trainer getTrainer(String username) {
         log.info("Getting trainer by username {}", username);
         User user = userService.getUserByUsername(username);
-        return trainerRepository.findByUserId(user.getId());
+        return trainerRepository.findByIdOver(user.getId());
     }
 
     public boolean changePassword(String password, String username) {

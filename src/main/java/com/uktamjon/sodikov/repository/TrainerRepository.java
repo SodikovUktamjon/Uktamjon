@@ -9,7 +9,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface TrainerRepository extends JpaRepository<Trainer, Integer> {
-    Trainer findByUserId(int userId);
+    @Query("select t from Trainer t where t.id=?1")
+    Trainer findByIdOver(int id);
 
     @NotNull List<Trainer> findAll();
 

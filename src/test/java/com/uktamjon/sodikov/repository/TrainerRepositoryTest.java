@@ -2,7 +2,6 @@ package com.uktamjon.sodikov.repository;
 
 import com.uktamjon.sodikov.domains.Trainer;
 import com.uktamjon.sodikov.domains.User;
-import com.uktamjon.sodikov.repository.TrainerRepository;
 import com.uktamjon.sodikov.services.TrainerService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,12 +32,12 @@ public class TrainerRepositoryTest {
         expectedTrainer.setUserId(User.builder()
                         .id(userId)
                 .build());
-        when(trainerRepository.findByUserId(userId)).thenReturn(expectedTrainer);
+        when(trainerRepository.findByIdOver(userId)).thenReturn(expectedTrainer);
 
         Trainer actualTrainer = trainerService.getTrainer(userId);
 
         assertEquals(expectedTrainer, actualTrainer);
-        verify(trainerRepository, times(1)).findByUserId(userId);
+        verify(trainerRepository, times(1)).findByIdOver(userId);
     }
 
     @Test

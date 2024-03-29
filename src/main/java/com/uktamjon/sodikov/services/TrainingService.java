@@ -64,11 +64,16 @@ public class TrainingService {
     }
 
     @Transactional
+    public List<Training> getAllTrainings() {
+        log.info("Trainings listed");
+        return trainingRepository.findAll();
+    }
+
+    @Transactional
     public void deleteTraining(int trainingId) {
         log.info("Training id: {}", trainingId);
         Optional<Training> training = trainingRepository.findById(trainingId);
         if (training.isPresent()) {
-            User user = training.get().getTrainerId().getUserId();
             sendTrainerWorkloadMessage(training.get(), ActionType.DELETE);
 
             trainingRepository.deleteById(trainingId);
@@ -77,7 +82,7 @@ public class TrainingService {
 
     }
 
-    private void sendTrainerWorkloadMessage(Training training, ActionType actionType) {
+    public int sendTrainerWorkloadMessage(Training training, ActionType actionType) {
         User user = training.getTrainerId().getUserId();
         TrainerWorkload trainerWorkload = TrainerWorkload.builder()
                 .id(training.getTrainerId().getId())
@@ -89,7 +94,12 @@ public class TrainingService {
                 .duration(training.getTrainingDuration())
                 .actionType(actionType)
                 .build();
+        try {
+            jmsTemplate.send("my-active-queue", session -> session.createObjectMessage(trainerWorkload));
+        }catch (Exception ignored){
 
-        jmsTemplate.send("my-active-queue", session -> session.createObjectMessage(trainerWorkload));
+        }
+
+        return trainerWorkload.getId();
     }
 }

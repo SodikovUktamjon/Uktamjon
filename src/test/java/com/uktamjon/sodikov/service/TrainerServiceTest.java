@@ -113,7 +113,7 @@ public class TrainerServiceTest {
         int trainerId = 1;
         Trainer expectedTrainer = new Trainer();
         expectedTrainer.setId(trainerId);
-        when(trainerRepository.findByUserId(trainerId)).thenReturn(expectedTrainer);
+        when(trainerRepository.findByIdOver(trainerId)).thenReturn(expectedTrainer);
         Trainer retrievedTrainer = trainerService.getTrainer(trainerId);
         assertEquals(expectedTrainer, retrievedTrainer);
 
