@@ -51,49 +51,57 @@ public class TrainingTypeStepDefinitions {
     public void theTrainingTypeIsUpdated() {
         assertEquals(trainingType.getTrainingTypeName(), trainingTypeService.getTrainingTypeById(trainingType.getId()).getTrainingTypeName());
     }
-//    @Given("multiple training types exist in the database")
-//    public void multipleTrainingTypesExistInTheDatabase() {
-//        trainingTypes = new ArrayList<>();
-//        trainingTypes.add(new TrainingType(1, "Software Development"));
-//        trainingTypes.add(new TrainingType(2, "Web Development"));
-//        // Simulate multiple training types in the database (modify based on your implementation)
-//        Mockito.when(trainingTypeService.getAllTrainingTypes()).thenReturn(trainingTypes);
-//    }
-//
-//
-//
-//    @When("I call the deleteTrainingType API with ID (\\d+)")
-//    public void iCallTheDeleteTrainingTypeAPIWithID(int id) {
-//        trainingTypeService.deleteTrainingType(id);
-//    }
-//
-//    @When("I call the getTrainingTypeById API with ID (\\d+)")
-//    public void iCallTheGetTrainingTypeByIdAPIWithID(int id) {
-//        Mockito.when(trainingTypeService.getTrainingTypeById(id)).thenReturn(trainingType);
-//    }
-//
-//    @When("I call the getAllTrainingTypes API")
-//    public void iCallTheGetAllTrainingTypesAPI() {
-//        trainingTypeService.getAllTrainingTypes();
-//    }
-//
-//
-//    @Then("the response contains the created training type with name \"([^\"]*)\"")
-//    public void theResponseContainsTheCreatedTrainingTypeWithName(String name) {
-//        // Assert the response object and verify the name
-//    }
-//
-//    @Then("the training type is updated successfully")
-//    public void theTrainingTypeIsUpdatedSuccessfully() {
-//        // Verify successful update using Mockito verification
-//        Mockito.verify(trainingTypeService).save(trainingType);
-//    }
-//
-//    @Then("the training type is not updated")
-//    public void theTrainingTypeIsNotUpdated() {
-//        // Verify no update using Mockito verification
-//        Mockito.verify(trainingTypeService, Mockito.never()).save(trainingType);
-//    }
-//
-//    @Then("the response status code indicates not found")
+    @Given("a training type with name {string} is created")
+    public void multipleTrainingTypesExistInTheDatabase(String string) {
+      trainingType=TrainingType.builder()
+              .trainingTypeName(string)
+              .build();
+      trainingTypeService.createTrainingType(trainingType);
+    }
+
+    @When("I call the updateTrainingType API with ID {int} and name {string} to {string}")
+    public void iCallTheDeleteTrainingTypeAPIWithID(int id, String name, String newName) {
+        trainingTypeService.updateTrainingType(TrainingType.builder()
+                        .trainingTypeName(newName)
+                        .id(id)
+                .build());
+    }
+
+    @Then("the training type is not updated and left like {string}")
+    public void theTrainingTypeIsNotUpdated(String name) {
+        String trainingTypeName = trainingTypeService.getTrainingTypeById(1).getTrainingTypeName();
+        assertNotEquals(trainingTypeName, trainingType.getTrainingTypeName());
+        assertEquals(trainingTypeName, name);
+    }
+
+
+    @When("I call the getAllTrainingTypes API")
+    public void iCallTheGetAllTrainingTypesAPI() {
+        trainingTypes=trainingTypeService.getAllTrainingTypes();
+    }
+
+    @Then("the response contains a list of all training types")
+    public void listAllTypes(){
+        assertEquals(trainingTypes.size(),2);
+    }
+
+
+
+    @Given("training types with ID {int} and ID {int} that exist in the database")
+    public void trainingTypesWithIDAndIDThatExistInTheDatabase(int arg0, int arg1) {
+        assertNotNull(trainingTypeService.getTrainingTypeById(arg0));
+        assertNotNull(trainingTypeService.getTrainingTypeById(arg1));
+    }
+
+    @When("I call the deleteTrainingType API with ID {int} and with ID {int}")
+    public void iCallTheDeleteTrainingTypeAPIWithIDAndWithID(int arg0, int arg1) {
+        trainingTypeService.deleteTrainingType(arg0);
+        trainingTypeService.deleteTrainingType(arg1);
+    }
+
+    @Then("training types is deleted successfully")
+    public void trainingTypesIsDeletedSuccessfully() {
+        assertEquals(trainingTypeService.getAllTrainingTypes().size(),0);
+    }
+
 }

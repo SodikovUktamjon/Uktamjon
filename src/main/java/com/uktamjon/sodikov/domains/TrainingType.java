@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 @Entity
-@Table(name = "training_type")
+@Table(name = "training_type",uniqueConstraints =@UniqueConstraint(columnNames = "trainingTypeName"))
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class    TrainingType {
+public class  TrainingType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
