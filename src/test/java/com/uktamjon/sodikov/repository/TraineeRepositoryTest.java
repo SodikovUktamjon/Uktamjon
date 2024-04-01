@@ -26,8 +26,8 @@ class TraineeRepositoryTest {
         User build = User.builder().id(1).build();
         trainee.setUserId(build);
         traineeRepository.save(trainee);
-        when(traineeRepository.findByUserId(build)).thenReturn(trainee);
-        Trainee foundTrainee = traineeRepository.findByUserId(build);
+        when(traineeRepository.findByUserId(1)).thenReturn(trainee);
+        Trainee foundTrainee = traineeRepository.findByUserId(1);
 
         assertNotNull(foundTrainee);
         assertEquals(1, foundTrainee.getUserId().getId());

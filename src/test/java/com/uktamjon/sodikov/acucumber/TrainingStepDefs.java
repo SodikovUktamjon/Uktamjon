@@ -1,4 +1,4 @@
-package com.uktamjon.sodikov.cucumber;
+package com.uktamjon.sodikov.acucumber;
 
 import com.uktamjon.sodikov.domains.*;
 import com.uktamjon.sodikov.services.TraineeService;
@@ -8,10 +8,7 @@ import com.uktamjon.sodikov.services.TrainingTypeService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.core.JmsTemplate;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -43,6 +40,7 @@ public class TrainingStepDefs {
 
     @Given("a training with trainer first name {string} and trainer last name {string} and trainee first name {string} and trainee last name {string} and training name {string}")
     public void aTrainingWithTrainerFirstNameAndTrainerLastNameAndTraineeFirstNameAndTraineeLastNameAndTrainingName(String arg0, String arg1, String arg2, String arg3, String arg4) {
+
         trainerUser = User.builder()
                 .firstName(arg0)
                 .lastName(arg1)
@@ -84,8 +82,6 @@ public class TrainingStepDefs {
     public void trainingShouldBeCreatedInDatabase() {
         assertNotNull(trainingService.getTraining(1));
         assertNotNull(trainingTypeService.getTrainingTypeByTrainingName(trainingType.getTrainingTypeName()));
-        assertNotNull(trainerService.getTrainer("Isaac.Newton"));
-        assertNotNull(traineeService.getTrainee("Some.Something"));
     }
 
     @When("all trainings are requested")

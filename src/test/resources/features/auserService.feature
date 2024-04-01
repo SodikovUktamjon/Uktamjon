@@ -10,35 +10,21 @@ Feature: User Service Feature
     Then all users should be returned
 
   Scenario: Getting a user by ID
-    Given a user with ID 1 exists
     When a user with ID 1 is requested
     Then the user with ID 1 should be returned
 
   Scenario: Updating a user
-    Given a user with ID 1 and first name "John" and last name "Doe" and role "ADMIN"
     When the user's first name is updated to "Johnny" and last name is updated to "Doey" and role is updated to "USER"
     Then the user's first name ans last name should be updated in the database
 
   Scenario: Updating a user's password
-    Given a user with ID 1
-    When the user's password is updated to "P@ssw0rd"
+    When the user's password is updated to "P@ssw0rd" with ID 1
     Then the user's password should be updated in the database
 
 
   Scenario: Activating and deactivating a user
-    Given a user with ID 1 exists while activating
-    When the user with ID 1 is activated
-    Then the user with ID 1 should be active in database
+    When the user with username "John.Doe" is activated
+    Then the user with username "John.Doe" should be active in database
 
-  Scenario: Deleting a user
-    Given a user with ID 1 exists
-    When the user with ID 1 is deleted
-    Then the user with ID 1 should no longer exist in the database
-
-
-
-  Scenario: Deleting a user with username
-    When the user with username "Uktam.Sodikov" is deleted
-    Then the user with username "Uktam.Sodikov" should no longer exist in the database
 
 

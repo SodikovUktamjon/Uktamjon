@@ -10,7 +10,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface TraineeRepository extends JpaRepository<Trainee, Integer> {
-    Trainee findByUserId(User userId);
+    @Query("select t from Trainee t where t.userId.id=?1")
+    Trainee findByUserId(int userId);
     @NotNull List<Trainee> findAll();
+    @Query("select t from Trainee t where t.userId.username=?1")
+    void deleteByUserId(String username);
 
 }

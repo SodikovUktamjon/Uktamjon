@@ -63,6 +63,12 @@ public class TrainerService {
         log.info("Trainee deleted: {}", traineeId);
     }
 
+    @Transactional
+    public void deleteTrainee(String traineeId) {
+        trainerRepository.deleteByUserId(traineeId);
+        log.info("Trainee deleted: {}", traineeId);
+    }
+
    @Transactional
     public Trainer getTrainer(int trainerId) {
         log.info("Getting trainer by id {}", trainerId);
@@ -104,6 +110,8 @@ public class TrainerService {
         log.info("Getting trainers not assigned and active");
         return trainerRepository.findAllByUserId_Active(true);
     }
+
+
 
 
 }

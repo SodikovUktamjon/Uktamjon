@@ -10,6 +10,6 @@ Feature: Training Service Features
     When all trainings are requested
     Then all trainings should be returned
 
-  Scenario: Delete Trainee
+  Scenario: Delete Training
     When I delete the trainee by ID 1
     Then the trainee by ID 1 should be deleted successfully

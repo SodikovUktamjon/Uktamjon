@@ -17,6 +17,8 @@ public interface TrainerRepository extends JpaRepository<Trainer, Integer> {
 
     @Query("select t from Trainer t where t.userId.isActive = ?1 and t.id not in(select f from Training f where f.trainerId.id is not null)")
     List<Trainer> findAllByUserId_Active(boolean active);
+    @Query("select t from Trainer t where t.userId.username=?1")
+    void deleteByUserId(String username);
 
 
 

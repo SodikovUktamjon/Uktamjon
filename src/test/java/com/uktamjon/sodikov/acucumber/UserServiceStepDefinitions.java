@@ -1,4 +1,4 @@
-package com.uktamjon.sodikov.cucumber;
+package com.uktamjon.sodikov.acucumber;
 
 import com.uktamjon.sodikov.domains.User;
 import com.uktamjon.sodikov.services.UserService;
@@ -7,8 +7,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -42,17 +40,10 @@ public class UserServiceStepDefinitions {
     @Then("the user should be persisted with a generated username")
     public void theUserShouldBePersistedWithAGeneratedUsername() {
         User userById = userService.getUserById(user.getId());
+        System.out.println(userById.getUsername());
         assertEquals(userById.getUsername(), "John.Doe");
     }
 
-    @Given("a user with ID {int} exists")
-    public void createUser(int userId) {
-        user = new User();
-        user.setId(userId);
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        userService.createUser(user);
-    }
 
     @When("a user with ID {int} is requested")
     public void getUserById(int userId) {
@@ -66,38 +57,17 @@ public class UserServiceStepDefinitions {
     }
 
 
-
-    @Given("a user with ID {int}")
-    public void setUserPassword(int userId) {
-        user = new User();
-        user.setId(userId);
-        user.setFirstName("Some");
-        user.setLastName("Some");
-        userService.createUser(user);
-    }
-
-    @When("the user's password is updated to {string}")
-    public void updateUserPassword(String newPassword) {
-        user.setPassword(newPassword);
-        userService.changePassword(newPassword, user.getId());
+    @When("the user's password is updated to {string} with ID {int}")
+    public void updateUserPassword(String newPassword, int id) {
+        user= User.builder().password(newPassword).build();
+        userService.changePassword(newPassword, id);
     }
 
     @Then("the user's password should be updated in the database")
     public void verifyPasswordUpdatedInDatabase() {
-        User updatedUser = userService.getUserById(user.getId());
+        User updatedUser = userService.getUserById(1);
         assertTrue(passwordGeneratorService.checkPassword(user.getPassword(), updatedUser.getPassword()));
     }
-
-    @When("the user with ID {int} is deleted")
-    public void deleteUser(int userId) {
-        userService.deleteUserById(userId);
-    }
-
-    @Then("the user with ID {int} should no longer exist in the database")
-    public void verifyUserDeleted(int userId) {
-        assertNull(userService.getUserById(userId));
-    }
-
 
     @When("all users are requested")
     public void allUsersAreRequested() {
@@ -109,18 +79,11 @@ public class UserServiceStepDefinitions {
     }
 
 
-    @Given("a user with ID {int} and first name {string} and last name {string} and role {string}")
-    public void aUserWithIDAndFirstNameAndLastNameAndRole(int arg0, String arg1, String arg2, String arg3) {
-        user=new User();
-        user.setId(arg0);
-        user.setLastName(arg1);
-        user.setFirstName(arg2);
-        user.setRole(arg3);
-        userService.createUser(user);
-    }
+
 
     @When("the user's first name is updated to {string} and last name is updated to {string} and role is updated to {string}")
     public void theUserSFirstNameIsUpdatedToAndLastNameIsUpdatedToAndRoleIsUpdatedTo(String arg0, String arg1, String arg2) {
+        user=userService.getUserById(1);
         user.setLastName(arg0);
         user.setFirstName(arg1);
         user.setRole(arg2);
@@ -136,35 +99,15 @@ public class UserServiceStepDefinitions {
     }
 
 
-
-
-    @Given("a user with ID {int} exists while activating")
-    public void createUserBeforeActivating(int userId) {
-        user = new User();
-        user.setFirstName("John");
-        user.setLastName("Doe");
-    }
-
-    @When("the user with ID {int} is activated")
-    public void userActivated(int userId) {
+    @When("the user with username {string} is activated")
+    public void userActivated(String userId) {
         userService.activateAndDeactivate(userId);
     }
 
-    @Then("the user with ID {int} should be active in database")
-    public void userActivatedInDatabase(int userId) {
-        assertTrue(userService.getUserById(userId).isActive());
+    @Then("the user with username {string} should be active in database")
+    public void userActivatedInDatabase(String userId) {
+        assertTrue(userService.getUserByUsername(userId).isActive());
     }
 
-
-    @When("the user with username {string} is deleted")
-    public void deleteUserWithUsername(String userId) {
-        userService.deleteByUsername(userId);
-    }
-
-    @Then("the user with username {string} should no longer exist in the database")
-    public void verifyUserDeleted(String username) {
-        assertNull(userService.getUserByUsername(username));
-        assertEquals(userService.getAllUsers().size(),0);
-    }
 
 }

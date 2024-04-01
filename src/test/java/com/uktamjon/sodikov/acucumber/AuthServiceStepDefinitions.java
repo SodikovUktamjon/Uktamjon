@@ -1,4 +1,4 @@
-package com.uktamjon.sodikov.cucumber;
+package com.uktamjon.sodikov.acucumber;
 
 import com.uktamjon.sodikov.domains.User;
 import com.uktamjon.sodikov.dtos.CreateAuthUserDTO;

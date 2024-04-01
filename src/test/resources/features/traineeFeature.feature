@@ -13,7 +13,6 @@ Feature: Trainee Service Features
     When all trainees are requested
     Then all trainees should be returned
 
-
   Scenario: Delete Trainee
     When I delete the trainee "Abraham.Lincoln"
     Then the trainee should be deleted successfully "Abraham.Lincoln"

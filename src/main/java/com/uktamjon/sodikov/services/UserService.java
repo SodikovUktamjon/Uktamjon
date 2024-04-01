@@ -58,7 +58,7 @@ public class UserService {
         userRepository.deleteById(userId);
         log.info("User deleted {}", userId);
     }
-
+   @Transactional
     public User getUserByUsername(String username) {
         log.info("Getting user by username {}", username);
         return userRepository.findByUsername(username);
@@ -67,8 +67,9 @@ public class UserService {
     public boolean changePassword(String password, String username) {
         User user = getUserByUsername(username);
         if (checkingUserAndPasswordMatching(password, user)) return false;
-        user.setPassword(password);
-        updateUser(user);
+        String s = passwordGenerator.encryptPassword(password);
+        user.setPassword(s);
+        userRepository.save(user);
         return true;
     }
 
@@ -152,6 +153,4 @@ public class UserService {
         log.debug("Generated User Name Suffix: {}", userNameSuffix);
         return userNameSuffix;
     }
-
-
 }

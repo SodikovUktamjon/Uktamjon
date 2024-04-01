@@ -1,10 +1,9 @@
-package com.uktamjon.sodikov.cucumber;
+package com.uktamjon.sodikov.acucumber;
 
 import com.uktamjon.sodikov.domains.Trainee;
 import com.uktamjon.sodikov.domains.User;
 import com.uktamjon.sodikov.dtos.CreateResponse;
 import com.uktamjon.sodikov.services.TraineeService;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -63,6 +62,7 @@ public class TraineeStepDefs {
         assertNotNull(trainee1);
         assertEquals(trainee1.getUserId().getUsername(), user.getUsername());
         System.out.println(trainee1.getUserId().getLastName());
+        System.out.println(trainee1.getUserId().getUsername());
         assertEquals(trainee1.getUserId().getLastName(), "Robertson");
     }
 
@@ -77,8 +77,7 @@ public class TraineeStepDefs {
 
     @When("I delete the trainee {string}")
     public void i_delete_the_trainee(String username) {
-        Trainee trainee1 = traineeService.getTrainee(username);
-        traineeService.deleteTrainee(trainee1.getId());
+        traineeService.deleteTrainee(username);
     }
 
     @Then("the trainee should be deleted successfully {string}")

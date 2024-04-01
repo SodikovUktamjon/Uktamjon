@@ -53,6 +53,11 @@ public class TraineeService {
         traineeRepository.deleteById(traineeId);
         log.info("Trainee deleted: {}", traineeId);
     }
+    @Transactional
+    public void deleteTrainee(String traineeId) {
+        traineeRepository.deleteByUserId(traineeId);
+        log.info("Trainee deleted: {}", traineeId);
+    }
 
     public Trainee getTrainee(int traineeId) {
         log.info("Getting trainee by id {}", traineeId);
@@ -63,7 +68,7 @@ public class TraineeService {
     public Trainee getTrainee(String username) {
         log.info("Getting trainee by username {}", username);
         User user = userService.getUserByUsername(username);
-        return traineeRepository.findByUserId(user);
+        return traineeRepository.findByUserId(user.getId());
     }
 
     public boolean changePassword(String password, String username) {

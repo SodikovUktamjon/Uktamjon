@@ -2,6 +2,7 @@ package com.uktamjon.sodikov.services;
 
 import com.uktamjon.sodikov.domains.TrainingType;
 import com.uktamjon.sodikov.repository.TrainingTypeRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,11 @@ public class TrainingTypeService {
         trainingTypeRepository.deleteById(trainingTypeId);
         log.info("Training type id: {}", trainingTypeId);
     }
+    @Transactional
+    public void deleteTrainingType(String trainingTypeId) {
+        trainingTypeRepository.deleteByTrainingTypeName(trainingTypeId);
+        log.info("Training type id: {}", trainingTypeId);
+    }
 
     public TrainingType getTrainingTypeById(int trainingTypeId) {
         log.info("Training type id: {}", trainingTypeId);
@@ -48,4 +54,6 @@ public class TrainingTypeService {
         log.info("Training type id: {}", trainingTypeId);
         return trainingTypeRepository.findByTrainingTypeName(trainingTypeId);
     }
+
+
 }

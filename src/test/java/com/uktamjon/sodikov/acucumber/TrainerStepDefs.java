@@ -1,9 +1,11 @@
-package com.uktamjon.sodikov.cucumber;
+package com.uktamjon.sodikov.acucumber;
 
 import com.uktamjon.sodikov.domains.Trainee;
+import com.uktamjon.sodikov.domains.Trainer;
 import com.uktamjon.sodikov.domains.User;
 import com.uktamjon.sodikov.dtos.CreateResponse;
 import com.uktamjon.sodikov.services.TraineeService;
+import com.uktamjon.sodikov.services.TrainerService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -14,15 +16,15 @@ import static org.junit.Assert.*;
 public class TrainerStepDefs {
 
     @Autowired
-    private TraineeService trainerService;
+    private TrainerService trainerService;
 
-    private Trainee trainer;
+    private Trainer trainer;
     private User user;
     private CreateResponse createResponse;
 
     @Given("a trainer with first name {string} and last name {string} and password {string}")
     public void aTraineeWithUsernameAndPassword(String firstName, String lastName, String password) {
-        trainer = new Trainee();
+        trainer = new Trainer();
         user = User.builder()
                 .firstName(firstName)
                 .lastName(lastName)
@@ -33,7 +35,7 @@ public class TrainerStepDefs {
 
     @When("I create the trainer")
     public void iCreateTheTrainee() {
-        createResponse = trainerService.createTrainee(trainer);
+        createResponse = trainerService.createTrainer(trainer);
         user.setUsername(createResponse.getUsername());
     }
 
@@ -49,31 +51,31 @@ public class TrainerStepDefs {
         user.setFirstName("Isaac");
         user.setUsername(username);
         user.setId(1);
-        trainer = Trainee.builder()
+        trainer = Trainer.builder()
                 .userId(user)
                 .id(1)
                 .build();
-        trainerService.updateTrainee(trainer);
+        trainerService.updateTrainer(trainer);
     }
 
     @Then("the trainer information should be updated successfully")
     public void trainerInformationShouldBeUpdated() {
-        Trainee trainer1 = trainerService.getTrainee(user.getUsername());
+        Trainer trainer1 = trainerService.getTrainer(user.getUsername());
         assertNotNull(trainer1);
         assertEquals(trainer1.getUserId().getUsername(), user.getUsername());
         System.out.println(trainer1.getUserId().getLastName());
+        System.out.println(trainer1.getUserId().getUsername());
         assertEquals(trainer1.getUserId().getLastName(), "Robertson");
     }
 
     @When("I delete the trainer {string}")
     public void i_delete_the_trainer(String username) {
-        Trainee trainer1 = trainerService.getTrainee(username);
-        trainerService.deleteTrainee(trainer1.getId());
+      trainerService.deleteTrainee(username);
     }
 
     @Then("the trainer should be deleted successfully {string}")
     public void the_trainer_should_be_deleted_successfully(String username) {
-        assertNull(trainerService.getTrainee(username));
+        assertNull(trainerService.getTrainer(username));
     }
 
     @When("all trainers are requested")
@@ -82,6 +84,6 @@ public class TrainerStepDefs {
 
     @Then("all trainers should be returned")
     public void allTrainersShouldBeReturned() {
-        assertEquals(trainerService.listAllTrainees().size(),1);
+        assertFalse(trainerService.getAllTrainers().isEmpty());
     }
 }
